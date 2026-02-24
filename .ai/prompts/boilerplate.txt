@@ -1,0 +1,62 @@
+I need your help to create the initial boilerplate in this empty repo folder.
+
+Goal:
+- Create a minimal ecommerce demo web app in C# that will later be used as the target for Selenium E2E tests.
+- For now, I only need a “Welcome” page to verify the container starts correctly.
+
+Tech decisions (must follow exactly):
+- Framework: ASP.NET Core 8 (Razor Pages)
+- Repo style: single repo (monorepo), with the web app under /src
+- Containerization: Docker + Docker Compose
+- Database: PostgreSQL container included in docker-compose (even if not used yet by the welcome page)
+- Health check endpoint: /health returns 200 OK with a simple payload
+- The web server must listen on port 8080 inside the container
+- Expose the web app on host port 8080 so I can browse http://localhost:8080
+
+Acceptance criteria:
+1) After generating files, I can run:
+   - docker compose up --build
+2) I can open:
+   - http://localhost:8080
+   and see a simple “Welcome” page (plain HTML is fine).
+3) I can open:
+   - http://localhost:8080/health
+   and receive HTTP 200.
+4) Docker Compose must include:
+   - a service named "db" for Postgres
+   - a service named "web" for the ASP.NET app
+5) The web service must depend on the db service (even if the app doesn’t query the DB yet).
+6) The solution should build and run on a clean machine with only Docker installed.
+
+Repo structure to create:
+- /src/DemoShop.Web/          (ASP.NET Core Razor Pages project)
+- /docker-compose.yml         (compose file at repo root)
+- /DemoShop.sln               (solution at repo root)
+- /README.md                  (basic instructions to run)
+
+Implementation requirements:
+- Create a new ASP.NET Core Razor Pages app named DemoShop.Web.
+- Add a default route "/" that renders a Welcome page with a title and one paragraph.
+- Add a minimal /health endpoint (could be a Razor Page or Minimal API endpoint).
+- Configure Kestrel to listen on http://0.0.0.0:8080 inside container.
+- Add Dockerfile for the web project (multi-stage build strongly preferred).
+- Compose should:
+  - start Postgres (official image)
+  - set POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB
+  - expose Postgres port only internally (no need to publish 5432 to host)
+  - start web and publish 8080:8080
+  - include a simple healthcheck for web (curl /health) if possible
+- Use environment variables for connection string configuration:
+  - ConnectionStrings__Default=Host=db;Port=5432;Database=...;Username=...;Password=...
+  (even if not used yet, wire it into appsettings so it’s ready)
+
+Output format requirements:
+- Do NOT explain concepts.
+- Provide a list of files to create with their full contents.
+- Ensure all paths are correct relative to repo root.
+- Ensure commands in README are accurate.
+
+After generating, double-check:
+- docker compose up --build works
+- site reachable at localhost:8080
+- /health returns 200

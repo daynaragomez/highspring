@@ -1,0 +1,31 @@
+.container {
+    margin: 0 auto;
+    max-width: 720px;
+    padding: 2rem 1rem;
+}
+
+.site-header,
+.site-footer {
+    background: #101828;
+    color: #f9fafb;
+}
+
+.site-header .brand {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.hero {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.125rem;
+    color: #475467;
+}

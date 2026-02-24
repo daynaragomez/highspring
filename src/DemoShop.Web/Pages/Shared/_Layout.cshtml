@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DemoShop</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <span class="brand">DemoShop</span>
+        </div>
+    </header>
+    <main role="main" class="container">
+        @RenderBody()
+    </main>
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; @DateTime.UtcNow.Year DemoShop</p>
+        </div>
+    </footer>
+</body>
+</html>

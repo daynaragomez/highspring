@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: demouser
+      POSTGRES_PASSWORD: demopassword
+      POSTGRES_DB: demodb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - demo
+  web:
+    build:
+      context: .
+      dockerfile: src/DemoShop.Web/Dockerfile
+    depends_on:
+      - db
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: Host=db;Port=5432;Database=demodb;Username=demouser;Password=demopassword
+    ports:
+      - "8080:8080"
+    networks:
+      - demo
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+volumes:
+  db-data:
+networks:
+  demo:
+    driver: bridge
