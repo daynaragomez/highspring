@@ -1,4 +1,6 @@
+using Highspring.Application.Abstractions.Repositories;
 using Highspring.Infrastructure.Persistence;
+using Highspring.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +15,12 @@ public static class DependencyInjection
             ?? "Host=localhost;Port=5432;Database=highspring;Username=postgres;Password=postgres";
 
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
+        services.AddScoped<ICartRepository, CartRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<ICouponRepository, CouponRepository>();
+        services.AddScoped<ITaxComponentRateRepository, TaxComponentRateRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }
