@@ -9,3 +9,4 @@ obj/
 dotnet-install.sh
 src/Highspring.Web/bin/
 src/Highspring.Web/obj/
+/.vs
