@@ -8,5 +8,7 @@ public interface ICartService
 
     Task<Cart> AddItemAsync(string guestSessionId, string sku, int quantity, CancellationToken cancellationToken);
 
+    Task<Cart> SetItemQuantityAsync(string guestSessionId, string sku, int quantity, CancellationToken cancellationToken);
+
     Task<Cart> RemoveItemAsync(string guestSessionId, string sku, CancellationToken cancellationToken);
 }

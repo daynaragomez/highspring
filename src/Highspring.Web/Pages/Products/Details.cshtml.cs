@@ -4,15 +4,19 @@ using Highspring.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Highspring.Web.Pages;
+namespace Highspring.Web.Pages.Products;
 
-public class IndexModel(IStorefrontService storefrontService) : PageModel
+public class DetailsModel(IStorefrontService storefrontService) : PageModel
 {
-    public IReadOnlyList<Product> Products { get; private set; } = [];
+    public Product? Product { get; private set; }
 
-    public async Task OnGetAsync(CancellationToken cancellationToken)
+    [BindProperty(SupportsGet = true)]
+    public string Sku { get; set; } = string.Empty;
+
+    public async Task<IActionResult> OnGetAsync(CancellationToken cancellationToken)
     {
-        Products = await storefrontService.GetProductsAsync(cancellationToken);
+        Product = await storefrontService.GetProductBySkuAsync(Sku, cancellationToken);
+        return Product is null ? NotFound() : Page();
     }
 
     public async Task<IActionResult> OnPostAddToCartAsync(string sku, int quantity, CancellationToken cancellationToken)

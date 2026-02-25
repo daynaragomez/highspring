@@ -7,6 +7,16 @@ namespace Highspring.Infrastructure.Persistence.Repositories;
 
 public class ProductRepository(AppDbContext dbContext) : IProductRepository
 {
+    public async Task<IReadOnlyList<Product>> ListAsync(CancellationToken cancellationToken)
+    {
+        var entities = await dbContext.Products
+            .AsNoTracking()
+            .OrderBy(item => item.Name)
+            .ToListAsync(cancellationToken);
+
+        return entities.Select(MapProduct).ToList();
+    }
+
     public async Task<Product?> GetBySkuAsync(string sku, CancellationToken cancellationToken)
     {
         var entity = await dbContext.Products
