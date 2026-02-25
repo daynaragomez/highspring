@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Highspring.Api/Highspring.Api.csproj" />
+    <Project Path="src/Highspring.Application/Highspring.Application.csproj" />
+    <Project Path="src/Highspring.Infrastructure/Highspring.Infrastructure.csproj" />
+    <Project Path="src/Highspring.Web/Highspring.Web.csproj" />
+  </Folder>
+</Solution>
