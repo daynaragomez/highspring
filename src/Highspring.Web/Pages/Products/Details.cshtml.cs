@@ -10,6 +10,8 @@ public class DetailsModel(IStorefrontService storefrontService) : PageModel
 {
     public Product? Product { get; private set; }
 
+    public string? ErrorMessage { get; private set; }
+
     [BindProperty(SupportsGet = true)]
     public string Sku { get; set; } = string.Empty;
 
@@ -21,8 +23,25 @@ public class DetailsModel(IStorefrontService storefrontService) : PageModel
 
     public async Task<IActionResult> OnPostAddToCartAsync(string sku, int quantity, CancellationToken cancellationToken)
     {
+        Sku = sku;
+        Product = await storefrontService.GetProductBySkuAsync(Sku, cancellationToken);
+
+        if (Product is null)
+        {
+            return NotFound();
+        }
+
         var guestSessionId = GuestSessionAccessor.GetOrCreateGuestSessionId(HttpContext);
-        await storefrontService.AddItemAsync(guestSessionId, sku, quantity <= 0 ? 1 : quantity, "CA", "QC", cancellationToken);
-        return RedirectToPage("/Cart/Index");
+
+        try
+        {
+            await storefrontService.AddItemAsync(guestSessionId, sku, quantity <= 0 ? 1 : quantity, "CA", "QC", cancellationToken);
+            return RedirectToPage("/Cart/Index");
+        }
+        catch (InvalidOperationException exception)
+        {
+            ErrorMessage = exception.Message;
+            return Page();
+        }
     }
 }
