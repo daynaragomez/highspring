@@ -1,77 +1,40 @@
 services:
-  db:
-    image: postgres:16
-    environment:
-      POSTGRES_USER: demouser
-      POSTGRES_PASSWORD: demopassword
-      POSTGRES_DB: demodb
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    networks:
-      - demo
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U demouser -d demodb"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 5s
-  seed:
-    image: postgres:16
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      PGHOST: db
-      PGPORT: 5432
-      PGUSER: demouser
-      PGPASSWORD: demopassword
-      PGDATABASE: demodb
-      SCENARIO: ${SCENARIO:-default}
-    volumes:
-      - ./db:/seed:ro
-    networks:
-      - demo
-    entrypoint:
-      - /bin/bash
-      - -c
-      - |
-        set -euo pipefail
-        echo "Waiting for PostgreSQL..."
-        until pg_isready -h "$$PGHOST" -p "$$PGPORT" -U "$$PGUSER" >/dev/null 2>&1; do
-          sleep 2
-        done
-        echo "Applying base seed"
-        psql "host=$$PGHOST port=$$PGPORT dbname=$$PGDATABASE user=$$PGUSER password=$$PGPASSWORD" -v ON_ERROR_STOP=1 -f /seed/base/001_base_seed.sql
-        scenario_file="/seed/scenarios/$$SCENARIO.sql"
-        if [ -n "$$SCENARIO" ] && [ "$$SCENARIO" != "default" ] && [ -f "$$scenario_file" ]; then
-          echo "Applying scenario: $$SCENARIO"
-          psql "host=$$PGHOST port=$$PGPORT dbname=$$PGDATABASE user=$$PGUSER password=$$PGPASSWORD" -v ON_ERROR_STOP=1 -f "$$scenario_file"
-        else
-          echo "No scenario delta applied (SCENARIO=$$SCENARIO)"
-        fi
-    restart: "no"
   web:
     build:
       context: .
-      dockerfile: src/DemoShop.Web/Dockerfile
-    depends_on:
-      seed:
-        condition: service_completed_successfully
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__Default: Host=db;Port=5432;Database=demodb;Username=demouser;Password=demopassword
+      dockerfile: src/Highspring.Web/Dockerfile
     ports:
       - "8080:8080"
-    networks:
-      - demo
-    healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://localhost:8080/health || exit 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=highspring;Username=postgres;Password=postgres
+    depends_on:
+      - db
+
+  api:
+    build:
+      context: .
+      dockerfile: src/Highspring.Api/Dockerfile
+    ports:
+      - "8081:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=highspring;Username=postgres;Password=postgres
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: highspring
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
 volumes:
-  db-data:
-networks:
-  demo:
-    driver: bridge
+  postgres_data:

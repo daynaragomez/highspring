@@ -1,0 +1,95 @@
+@page "/checkout"
+@model Highspring.Web.Pages.Checkout.IndexModel
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<section class="space-y-6" data-testid="page-checkout">
+    <h1 class="text-3xl font-bold tracking-tight">Checkout</h1>
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">@Model.ErrorMessage</div>
+    }
+
+    <div class="grid gap-6 lg:grid-cols-3">
+        <form method="post" class="space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
+            <div>
+                <label asp-for="Input.FullName" class="block text-sm font-medium text-slate-700"></label>
+                <input asp-for="Input.FullName" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                <span asp-validation-for="Input.FullName" class="text-sm text-red-600"></span>
+            </div>
+            <div class="grid gap-4 md:grid-cols-2">
+                <div>
+                    <label asp-for="Input.Email" class="block text-sm font-medium text-slate-700"></label>
+                    <input asp-for="Input.Email" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                    <span asp-validation-for="Input.Email" class="text-sm text-red-600"></span>
+                </div>
+                <div>
+                    <label asp-for="Input.Phone" class="block text-sm font-medium text-slate-700"></label>
+                    <input asp-for="Input.Phone" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                    <span asp-validation-for="Input.Phone" class="text-sm text-red-600"></span>
+                </div>
+            </div>
+            <div>
+                <label asp-for="Input.AddressLine1" class="block text-sm font-medium text-slate-700"></label>
+                <input asp-for="Input.AddressLine1" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                <span asp-validation-for="Input.AddressLine1" class="text-sm text-red-600"></span>
+            </div>
+            <div>
+                <label asp-for="Input.AddressLine2" class="block text-sm font-medium text-slate-700"></label>
+                <input asp-for="Input.AddressLine2" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+            </div>
+            <div class="grid gap-4 md:grid-cols-2">
+                <div>
+                    <label asp-for="Input.City" class="block text-sm font-medium text-slate-700"></label>
+                    <input asp-for="Input.City" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                    <span asp-validation-for="Input.City" class="text-sm text-red-600"></span>
+                </div>
+                <div>
+                    <label asp-for="Input.StateOrRegion" class="block text-sm font-medium text-slate-700"></label>
+                    <input asp-for="Input.StateOrRegion" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                    <span asp-validation-for="Input.StateOrRegion" class="text-sm text-red-600"></span>
+                </div>
+            </div>
+            <div class="grid gap-4 md:grid-cols-2">
+                <div>
+                    <label asp-for="Input.PostalCode" class="block text-sm font-medium text-slate-700"></label>
+                    <input asp-for="Input.PostalCode" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                    <span asp-validation-for="Input.PostalCode" class="text-sm text-red-600"></span>
+                </div>
+                <div>
+                    <label asp-for="Input.Country" class="block text-sm font-medium text-slate-700"></label>
+                    <input asp-for="Input.Country" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                    <span asp-validation-for="Input.Country" class="text-sm text-red-600"></span>
+                </div>
+            </div>
+
+            <button type="submit" data-testid="checkout-submit" class="w-full rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800">Place order</button>
+        </form>
+
+        <aside class="space-y-2 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm text-sm">
+            <h2 class="text-lg font-semibold">Order summary</h2>
+            <div class="flex items-center justify-between">
+                <span class="text-slate-600">Subtotal</span>
+                <span data-testid="subtotal-value" class="font-semibold">$@Model.Snapshot.Pricing.Subtotal.ToString("0.00")</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-slate-600">Discount</span>
+                <span data-testid="discount-total" class="font-semibold">$@Model.Snapshot.Pricing.DiscountTotal.ToString("0.00")</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-slate-600">Tax</span>
+                <span data-testid="tax-total" class="font-semibold">$@Model.Snapshot.Pricing.TaxTotal.ToString("0.00")</span>
+            </div>
+            <div class="flex items-center justify-between border-t border-slate-200 pt-2 text-base font-bold">
+                <span>Total</span>
+                <span data-testid="order-total">$@Model.Snapshot.Pricing.GrandTotal.ToString("0.00")</span>
+            </div>
+        </aside>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

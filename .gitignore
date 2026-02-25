@@ -7,5 +7,5 @@ obj/
 .ds_store
 *.tmp
 dotnet-install.sh
-src/DemoShop.Web/bin/
-src/DemoShop.Web/obj/
+src/Highspring.Web/bin/
+src/Highspring.Web/obj/
