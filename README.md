@@ -1,6 +1,6 @@
 # Highspring
 
-[![Automation Smoke (main)](https://github.com/daynaragomez/highspring/actions/workflows/automation-smoke.yml/badge.svg?branch=main)](https://github.com/daynaragomez/highspring/actions/workflows/automation-smoke.yml?query=branch%3Amain)
+[![Automation Tests (main)](https://github.com/daynaragomez/highspring/actions/workflows/automation-tests.yml/badge.svg?branch=main)](https://github.com/daynaragomez/highspring/actions/workflows/automation-tests.yml?query=branch%3Amain)
 
 Automation-ready .NET ecommerce demo with:
 - `Highspring.Web` (Razor Pages UI)
@@ -8,6 +8,8 @@ Automation-ready .NET ecommerce demo with:
 - `PostgreSQL` (via Docker Compose)
 
 This README is focused on **building reliable Selenium automation** for cart, discount, tax, and checkout flows.
+
+Automation conventions (architecture, naming, suite strategy): [automation/README.md](automation/README.md)
 
 ## Quick Start (Docker)
 
@@ -237,6 +239,33 @@ Razor Pages forms include anti-forgery tokens.
 - Wait for URL change after submits (`/cart`, `/checkout`, confirmation route).
 - Wait for key test IDs before asserting values.
 - Avoid brittle CSS structure selectors; prefer `data-testid`.
+
+## Automation Suites and Execution
+
+Project: `automation/Highspring.Automation.csproj`
+
+Suite categories:
+- `Smoke` → fast deployment gate (home loads and core wiring is alive)
+- `E2E` → business journey validation (discount/tax/checkout/cart clear)
+
+Local run commands:
+
+```bash
+# Smoke only
+dotnet test automation/Highspring.Automation.csproj --filter "Category=Smoke"
+
+# E2E only
+dotnet test automation/Highspring.Automation.csproj --filter "Category=E2E"
+
+# Headed run (visible Chrome) for local demo/debug
+HIGHSPRING_HEADLESS=false dotnet test automation/Highspring.Automation.csproj --filter "Category=Smoke"
+```
+
+CI cadence (GitHub Actions `Automation Tests`):
+- Push to `demo-app/**` or `automation/**` → `Smoke`
+- Pull Request touching those paths → `Smoke` + `E2E`
+- Nightly schedule → `E2E`
+- Manual (`workflow_dispatch`) → choose `all`, `smoke`, or `e2e`
 
 ---
 
