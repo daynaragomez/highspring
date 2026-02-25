@@ -1,0 +1,174 @@
+```text
+I need your help implementing Step 4 of my ASP.NET Core 8 Razor Pages ecommerce demo.
+
+IMPORTANT:
+- Do NOT introduce database or EF Core.
+- Continue using session storage only.
+- Do NOT refactor unrelated files.
+- Keep all existing data-testid attributes unchanged.
+- Use Bootstrap-friendly markup but do not add new CSS frameworks.
+- Provide full contents for any new or modified files.
+- Do not explain anything — only output files and contents.
+
+Goal:
+Implement a Checkout page with form validation and an Order Confirmation page.
+Checkout should read cart from session, validate inputs, create a simple order summary in session, clear cart, and redirect to confirmation.
+
+--------------------------------------------------
+1) Create Checkout Page
+--------------------------------------------------
+
+Route:
+  /checkout
+
+Files:
+  /src/DemoShop.Web/Pages/Checkout.cshtml
+  /src/DemoShop.Web/Pages/Checkout.cshtml.cs
+
+Behavior (GET):
+- Load cart from session key "CART" (List<CartItem>).
+- If cart is empty:
+  - Show message "Your cart is empty."
+  - data-testid="checkout-empty-cart-message"
+  - Show a link back to /products with data-testid="checkout-back-to-products"
+  - Do NOT show the checkout form.
+
+Behavior (POST):
+- If cart is empty, remain on page showing empty message (no processing).
+
+Checkout form fields (all required unless specified):
+- Full Name (string)
+  data-testid="checkout-fullname"
+- Email (string, must be valid email format)
+  data-testid="checkout-email"
+- Phone (string, optional)
+  data-testid="checkout-phone"
+- Address Line 1 (string)
+  data-testid="checkout-address1"
+- Address Line 2 (string, optional)
+  data-testid="checkout-address2"
+- City (string)
+  data-testid="checkout-city"
+- Postal Code (string; validate Canadian postal format: A1A 1A1, case-insensitive, allow optional space)
+  data-testid="checkout-postal"
+- Shipping Method (radio):
+  - Standard (cost 0)
+  - Express (cost 9.99)
+  data-testid="checkout-shipping-standard" and data-testid="checkout-shipping-express"
+- Payment Method (radio; fake payment, no gateway):
+  - Card
+  - CashOnDelivery
+  data-testid="checkout-payment-card" and data-testid="checkout-payment-cod"
+
+Form requirements:
+- Wrap fields in a <form method="post">.
+- Show a validation summary at top:
+  data-testid="checkout-validation-summary"
+- Add "Place Order" button:
+  data-testid="place-order-button"
+
+Order summary (shown on Checkout page when cart not empty):
+- Subtotal (sum of line totals)
+  data-testid="checkout-subtotal"
+- Shipping cost (0 or 9.99)
+  data-testid="checkout-shipping-cost"
+- Total (subtotal + shipping)
+  data-testid="checkout-total"
+
+On successful POST:
+- Create an Order object (in memory) with:
+  - OrderId (string or GUID)
+  - CreatedUtc (DateTime)
+  - Customer fields from form
+  - ShippingMethod
+  - PaymentMethod
+  - Items (copy of CartItem list)
+  - Subtotal
+  - ShippingCost
+  - Total
+- Store this Order in session as JSON under key "LAST_ORDER".
+- Clear the cart by removing session key "CART".
+- Redirect to /order/confirmation/{orderId}
+
+--------------------------------------------------
+2) Create Order Confirmation Page
+--------------------------------------------------
+
+Route:
+  /order/confirmation/{orderId}
+
+Files:
+  /src/DemoShop.Web/Pages/OrderConfirmation.cshtml
+  /src/DemoShop.Web/Pages/OrderConfirmation.cshtml.cs
+
+Behavior:
+- Read session key "LAST_ORDER".
+- If missing or OrderId does not match route parameter:
+  - Show message "Order not found."
+  - data-testid="order-not-found-message"
+  - Return 404 status if appropriate OR display message (choose one consistent approach).
+- If present and matches:
+  - Show title "Order Confirmed"
+    data-testid="order-confirmed-title"
+  - Show Order ID
+    data-testid="order-id"
+  - Show Total
+    data-testid="order-total"
+  - Show list of items with:
+    - wrapper: data-testid="order-item-<productId>"
+    - name: data-testid="order-item-name-<productId>"
+    - qty: data-testid="order-item-qty-<productId>"
+    - line total: data-testid="order-item-line-total-<productId>"
+  - Provide link "Continue Shopping" to /products
+    data-testid="continue-shopping-link"
+
+--------------------------------------------------
+3) Shared Models
+--------------------------------------------------
+
+If not already present, create shared models in:
+  /src/DemoShop.Web/Models/
+
+Required models:
+- CartItem (must match what is stored in session)
+- CheckoutInputModel (optional) with data annotations
+- Order
+- OrderItem (optional; can reuse CartItem as items if simpler)
+
+Keep models minimal, no DB.
+
+--------------------------------------------------
+4) CartItem Contract (must not break Step 2/3)
+--------------------------------------------------
+
+- Ensure CartItem structure remains compatible with existing session JSON.
+- If you need to move CartItem to /Models, ensure Step 2 and Step 3 still serialize/deserialize the same shape.
+
+--------------------------------------------------
+Acceptance Criteria
+--------------------------------------------------
+
+1) Add items to cart
+2) Go to /checkout
+3) See summary and form
+4) Subtotal and totals display correctly
+5) Choose Express shipping updates total (on POST is acceptable; real-time JS not required)
+6) Submit valid form → redirects to confirmation
+7) Confirmation page shows correct order id, items, total
+8) Cart is cleared after successful order
+9) If user visits confirmation without order in session → "Order not found."
+
+--------------------------------------------------
+Output Format
+--------------------------------------------------
+
+Provide full contents for all new/modified files:
+- Checkout.cshtml
+- Checkout.cshtml.cs
+- OrderConfirmation.cshtml
+- OrderConfirmation.cshtml.cs
+- Any new/modified model files
+- Any other file changed (only if necessary)
+
+Do not explain. Only output file paths and their full contents.
+```
