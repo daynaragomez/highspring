@@ -26,13 +26,13 @@ else
             <p class="text-sm font-semibold uppercase tracking-wide text-slate-500">@Model.Product.Sku</p>
             <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900">@Model.Product.Name</h1>
             <p class="mt-4 text-2xl font-bold text-slate-900">$@Model.Product.Price.ToString("0.00")</p>
-            <p class="mt-2 text-sm text-slate-600">Available stock: @Model.Product.StockQuantity</p>
+            <p class="mt-2 text-sm text-slate-600">Stock: @Model.Product.StockQuantity</p>
 
             <form method="post" asp-page-handler="AddToCart" class="mt-6 max-w-xs space-y-3">
                 <input type="hidden" name="sku" value="@Model.Product.Sku" />
                 <label class="block text-sm font-medium text-slate-700" for="quantity">Quantity</label>
-                <input id="quantity" name="quantity" value="1" min="1" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-                <button type="submit" class="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800" data-testid="add-to-cart-@Model.Product.Sku">Add to cart</button>
+                <input id="quantity" name="quantity" value="@Model.InputQuantity" min="1" max="@(Model.Product.StockQuantity > 0 ? Model.Product.StockQuantity : 1)" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" disabled="@(Model.Product.StockQuantity == 0)" />
+                <button type="submit" class="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300" data-testid="add-to-cart-@Model.Product.Sku" disabled="@(Model.Product.StockQuantity == 0)">@(Model.IsInCart ? "Update cart" : "Add to cart")</button>
             </form>
         </article>
     </section>
