@@ -1,0 +1,85 @@
+I need your help implementing Step 5.1 of my ASP.NET Core 8 Razor Pages ecommerce demo.
+
+IMPORTANT:
+- Do NOT change any existing pages or their behavior.
+- Do NOT replace hardcoded products yet.
+- Do NOT introduce any new routes.
+- Do NOT refactor unrelated files.
+- Keep all existing data-testid attributes unchanged.
+- The app must continue to run with docker compose and show the same UI as before.
+- Provide full contents for any new or modified files.
+- Do not explain — only output file paths and their contents.
+
+Goal of Step 5.1:
+Introduce EF Core infrastructure and PostgreSQL wiring so the app is ready to use a real DB later, without changing the UI.
+
+Current context:
+- Repo already has Docker + docker-compose with services "web" and "db" (Postgres).
+- The web app already reads ConnectionStrings__Default from environment variables (or should).
+- The site is accessible at http://localhost:8080
+
+--------------------------------------------------
+1) Add EF Core packages (PostgreSQL provider)
+--------------------------------------------------
+Update the web project (.csproj) to include:
+- Microsoft.EntityFrameworkCore
+- Microsoft.EntityFrameworkCore.Design
+- Npgsql.EntityFrameworkCore.PostgreSQL
+
+Use versions compatible with .NET 8.
+
+--------------------------------------------------
+2) Add AppDbContext (no entities yet)
+--------------------------------------------------
+Create:
+  /src/DemoShop.Web/Data/AppDbContext.cs
+
+Requirements:
+- AppDbContext inherits DbContext
+- Constructor takes DbContextOptions<AppDbContext>
+- No DbSet<> is required yet (we will add entities in Step 5.2)
+
+--------------------------------------------------
+3) Register DbContext in Program.cs
+--------------------------------------------------
+Modify Program.cs to:
+- Add DbContext registration using the "Default" connection string:
+  builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(...));
+- Ensure it reads from configuration:
+  builder.Configuration.GetConnectionString("Default")
+
+Do NOT add migrations or ensure-created yet in this step.
+Do NOT auto-run migrations yet.
+
+--------------------------------------------------
+4) Configuration
+--------------------------------------------------
+Ensure appsettings supports:
+- ConnectionStrings:Default
+
+If appsettings.json does not have it, add a placeholder value (it can be empty or local) but must exist.
+
+The docker-compose environment variable must remain the source of truth at runtime:
+- ConnectionStrings__Default=Host=db;Port=5432;Database=...;Username=...;Password=...
+
+Do not change docker-compose unless it is missing this environment variable.
+
+--------------------------------------------------
+5) Build must still succeed
+--------------------------------------------------
+After these changes:
+- docker compose up --build must work
+- Welcome page, Products, Cart, Checkout, Confirmation must still work exactly as before
+- No pages should query the DB yet
+
+--------------------------------------------------
+Output format
+--------------------------------------------------
+Provide full contents for all files you modify or create, including:
+- /src/DemoShop.Web/DemoShop.Web.csproj (or the correct csproj path/name)
+- /src/DemoShop.Web/Data/AppDbContext.cs
+- /src/DemoShop.Web/Program.cs
+- /src/DemoShop.Web/appsettings.json (only if modified)
+- /docker-compose.yml (only if modified, and only if required)
+
+Do not explain. Only output file paths and their full contents.

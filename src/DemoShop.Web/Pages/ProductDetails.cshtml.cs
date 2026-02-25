@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Text.Json;
+using DemoShop.Web.Data;
 using DemoShop.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,14 +11,12 @@ public class ProductDetailsModel : PageModel
 {
     private const string CartSessionKey = "CART";
 
-    private static readonly IReadOnlyList<ProductViewModel> SeedProducts = new List<ProductViewModel>
+    private readonly AppDbContext _dbContext;
+
+    public ProductDetailsModel(AppDbContext dbContext)
     {
-        new(1, "Essential Hoodie", 48.00m),
-        new(2, "Canvas Tote", 22.50m),
-        new(3, "Ceramic Mug", 14.00m),
-        new(4, "Notebook Set", 18.75m),
-        new(5, "Wireless Charger", 36.40m)
-    };
+        _dbContext = dbContext;
+    }
 
     [BindProperty(SupportsGet = true)]
     public int Id { get; set; }
@@ -36,6 +35,10 @@ public class ProductDetailsModel : PageModel
         }
 
         Product = product;
+        if (Product.Stock <= 0)
+        {
+            ModelState.AddModelError(string.Empty, "This product is currently out of stock.");
+        }
         if (Quantity < 1)
         {
             Quantity = 1;
@@ -54,9 +57,18 @@ public class ProductDetailsModel : PageModel
 
         Product = product;
 
+        if (Product.Stock <= 0)
+        {
+            ModelState.AddModelError(string.Empty, "This product is currently out of stock.");
+        }
         if (Quantity < 1)
         {
             ModelState.AddModelError(nameof(Quantity), "Quantity must be at least 1.");
+        }
+
+        if (Quantity > Product.Stock)
+        {
+            ModelState.AddModelError(nameof(Quantity), $"Only {Product.Stock} left in stock.");
         }
 
         if (!ModelState.IsValid)
@@ -86,7 +98,10 @@ public class ProductDetailsModel : PageModel
         return Redirect("/cart");
     }
 
-    private static ProductViewModel? FindProduct(int id) => SeedProducts.FirstOrDefault(p => p.Id == id);
+    private ProductViewModel? FindProduct(int id) => _dbContext.Products
+        .Where(p => p.Id == id)
+        .Select(p => new ProductViewModel(p.Id, p.Name, p.Price, p.Stock))
+        .FirstOrDefault();
 
     private List<CartItem> GetCart()
     {
@@ -105,5 +120,5 @@ public class ProductDetailsModel : PageModel
         HttpContext.Session.SetString(CartSessionKey, json);
     }
 
-    public record ProductViewModel(int Id, string Name, decimal Price);
+    public record ProductViewModel(int Id, string Name, decimal Price, int Stock);
 }

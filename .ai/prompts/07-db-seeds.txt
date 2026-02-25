@@ -1,0 +1,119 @@
+I need your help implementing Step 5.2 of my ASP.NET Core 8 Razor Pages ecommerce demo.
+
+IMPORTANT:
+- Do NOT modify any existing Razor Pages yet.
+- Do NOT remove the current hardcoded product list.
+- Do NOT change UI behavior.
+- Keep all existing data-testid attributes unchanged.
+- The app must continue to build and run with docker compose.
+- Provide full contents for any new or modified files.
+- Do not explain anything — only output file paths and their contents.
+
+Goal:
+Introduce a Product entity, add EF Core migration support, and seed base product data into PostgreSQL.
+The UI will still use hardcoded data for now.
+
+--------------------------------------------------
+1) Create Product Entity
+--------------------------------------------------
+
+Create:
+  /src/DemoShop.Web/Models/Product.cs
+
+Fields:
+- int Id (primary key)
+- string Name (required, max length 200)
+- decimal Price (required)
+- int Stock (required, default 0)
+- DateTime CreatedUtc (default to UTC now)
+
+Use data annotations where appropriate.
+
+--------------------------------------------------
+2) Update AppDbContext
+--------------------------------------------------
+
+Modify:
+  /src/DemoShop.Web/Data/AppDbContext.cs
+
+Add:
+  DbSet<Product> Products
+
+Do not add other entities yet.
+
+--------------------------------------------------
+3) Enable Migrations
+--------------------------------------------------
+
+- Ensure EF Core Design package is present.
+- Ensure project can generate migrations.
+- Do NOT generate the migration file manually in this prompt.
+- Instead, configure so that I can run:
+
+    dotnet ef migrations add InitialCreate
+    dotnet ef database update
+
+from inside the web project folder.
+
+If any configuration is required for EF CLI to work inside Docker, explain through code (not comments).
+
+--------------------------------------------------
+4) Add Base Data Seeding (Code-Based for Now)
+--------------------------------------------------
+
+Inside Program.cs (or a new extension class if cleaner):
+
+Add logic that runs at startup in Development or Test environment:
+
+- If Products table is empty:
+    - Insert at least 5 base products:
+        Ids should NOT be hardcoded manually (let DB generate them)
+        Example products:
+            - Mechanical Keyboard ($99.99, Stock 10)
+            - Gaming Mouse ($49.99, Stock 15)
+            - USB-C Hub ($29.99, Stock 25)
+            - 4K Monitor ($399.99, Stock 5)
+            - Noise Cancelling Headphones ($199.99, Stock 8)
+    - SaveChanges()
+
+IMPORTANT:
+- Only seed if table is empty.
+- Do not duplicate entries on restart.
+- Keep seeding minimal and clean.
+
+--------------------------------------------------
+5) Ensure Docker Compatibility
+--------------------------------------------------
+
+- When docker compose up runs,
+  the DB container starts,
+  then the web app starts,
+  and seeding runs successfully.
+
+- If DB might not be ready immediately,
+  implement minimal retry logic OR ensure web depends_on db correctly.
+  Keep it simple.
+
+--------------------------------------------------
+Acceptance Criteria
+--------------------------------------------------
+
+After implementation:
+
+1) docker compose up --build works
+2) DB contains Products table
+3) Products table contains 5 rows
+4) Existing UI still works exactly as before (still using hardcoded list for now)
+
+--------------------------------------------------
+Output Format
+--------------------------------------------------
+
+Provide full contents for:
+- Product.cs
+- AppDbContext.cs (updated)
+- Program.cs (updated)
+- Any new helper classes (if created)
+- Any modified project files (only if required)
+
+Do not explain. Only output file paths and their full contents.

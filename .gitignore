@@ -1,0 +1,11 @@
+bin/
+obj/
+*.user
+*.swp
+*.suo
+.vscode/
+.ds_store
+*.tmp
+dotnet-install.sh
+src/DemoShop.Web/bin/
+src/DemoShop.Web/obj/

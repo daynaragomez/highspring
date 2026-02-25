@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text.Json;
+using DemoShop.Web.Data;
 using DemoShop.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,6 +13,12 @@ public class CheckoutModel : PageModel
     private const string CartSessionKey = "CART";
     private const string LastOrderSessionKey = "LAST_ORDER";
     private const decimal ExpressShippingCost = 9.99m;
+    private readonly AppDbContext _dbContext;
+
+    public CheckoutModel(AppDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
 
     [BindProperty]
     public CheckoutInputModel Input { get; set; } = new();
@@ -40,6 +47,8 @@ public class CheckoutModel : PageModel
             ModelState.Clear();
             return Page();
         }
+
+        ValidateCartStock();
 
         if (!IsValidShipping(Input.ShippingMethod))
         {
@@ -118,6 +127,37 @@ public class CheckoutModel : PageModel
     {
         var json = JsonSerializer.Serialize(order);
         HttpContext.Session.SetString(LastOrderSessionKey, json);
+    }
+
+    private void ValidateCartStock()
+    {
+        var productIds = CartItems.Select(ci => ci.ProductId).ToList();
+        if (productIds.Count == 0)
+        {
+            return;
+        }
+
+        var inventory = _dbContext.Products
+            .Where(p => productIds.Contains(p.Id))
+            .ToDictionary(p => p.Id, p => p);
+
+        foreach (var item in CartItems)
+        {
+            if (!inventory.TryGetValue(item.ProductId, out var product))
+            {
+                ModelState.AddModelError(string.Empty, $"{item.Name} is no longer available.");
+                continue;
+            }
+
+            if (product.Stock <= 0)
+            {
+                ModelState.AddModelError(string.Empty, $"{product.Name} is out of stock.");
+            }
+            else if (item.Quantity > product.Stock)
+            {
+                ModelState.AddModelError(string.Empty, $"Only {product.Stock} units of {product.Name} are available.");
+            }
+        }
     }
 
     private static decimal CalculateShippingCost(string? method) =>
