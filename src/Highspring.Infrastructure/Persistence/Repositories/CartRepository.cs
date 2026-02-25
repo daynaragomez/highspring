@@ -33,45 +33,67 @@ public class CartRepository(AppDbContext dbContext) : ICartRepository
         return cart is null ? null : MapCart(cart);
     }
 
-    public async Task SaveAsync(Cart cart, CancellationToken cancellationToken)
+    public async Task UpsertItemAsync(Guid cartId, Guid productId, string productSku, string productName, decimal unitPriceSnapshot, int quantity, CancellationToken cancellationToken)
     {
-        var entity = await dbContext.Carts
-            .Include(item => item.Items)
-            .SingleOrDefaultAsync(item => item.Id == cart.Id, cancellationToken);
+        var cart = await dbContext.Carts.SingleAsync(item => item.Id == cartId, cancellationToken);
 
-        if (entity is null)
+        var itemEntity = await dbContext.CartItems
+            .SingleOrDefaultAsync(item => item.CartId == cartId && item.ProductId == productId, cancellationToken);
+
+        if (itemEntity is null)
         {
-            entity = new CartEntity
+            dbContext.CartItems.Add(new CartItemEntity
             {
-                Id = cart.Id,
-                GuestSessionId = cart.GuestSessionId,
-                CreatedAtUtc = cart.CreatedAtUtc,
-                UpdatedAtUtc = cart.UpdatedAtUtc
-            };
-
-            dbContext.Carts.Add(entity);
-        }
-
-        entity.GuestSessionId = cart.GuestSessionId;
-        entity.CreatedAtUtc = cart.CreatedAtUtc;
-        entity.UpdatedAtUtc = cart.UpdatedAtUtc;
-
-        entity.Items.Clear();
-        foreach (var item in cart.Items)
-        {
-            entity.Items.Add(new CartItemEntity
-            {
-                Id = item.Id,
-                CartId = cart.Id,
-                ProductId = item.ProductId,
-                ProductSku = item.ProductSku,
-                ProductName = item.ProductName,
-                UnitPriceSnapshot = item.UnitPriceSnapshot,
-                Quantity = item.Quantity
+                Id = Guid.NewGuid(),
+                CartId = cartId,
+                ProductId = productId,
+                ProductSku = productSku,
+                ProductName = productName,
+                UnitPriceSnapshot = unitPriceSnapshot,
+                Quantity = quantity
             });
         }
+        else
+        {
+            itemEntity.ProductSku = productSku;
+            itemEntity.ProductName = productName;
+            itemEntity.UnitPriceSnapshot = unitPriceSnapshot;
+            itemEntity.Quantity = quantity;
+        }
 
-        await Task.CompletedTask;
+        cart.UpdatedAtUtc = DateTimeOffset.UtcNow;
+    }
+
+    public async Task RemoveItemAsync(Guid cartId, string sku, CancellationToken cancellationToken)
+    {
+        var cart = await dbContext.Carts
+            .Include(item => item.Items)
+            .SingleAsync(item => item.Id == cartId, cancellationToken);
+
+        var itemsToRemove = cart.Items
+            .Where(item => string.Equals(item.ProductSku, sku, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        if (itemsToRemove.Count > 0)
+        {
+            dbContext.CartItems.RemoveRange(itemsToRemove);
+        }
+
+        cart.UpdatedAtUtc = DateTimeOffset.UtcNow;
+    }
+
+    public async Task ClearItemsAsync(Guid cartId, CancellationToken cancellationToken)
+    {
+        var cart = await dbContext.Carts
+            .Include(item => item.Items)
+            .SingleAsync(item => item.Id == cartId, cancellationToken);
+
+        if (cart.Items.Count > 0)
+        {
+            dbContext.CartItems.RemoveRange(cart.Items);
+        }
+
+        cart.UpdatedAtUtc = DateTimeOffset.UtcNow;
     }
 
     private Task<CartEntity?> GetEntityByGuestSessionIdAsync(string guestSessionId, CancellationToken cancellationToken)

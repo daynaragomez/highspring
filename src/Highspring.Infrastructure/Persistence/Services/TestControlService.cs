@@ -111,29 +111,58 @@ public class TestControlService(
             dbContext.Carts.Add(cartEntity);
         }
 
-        cartEntity.Items.Clear();
-
         var normalizedItems = items
             .GroupBy(item => item.Sku, StringComparer.OrdinalIgnoreCase)
             .Select(group => new TestCartItemInput(group.Key, group.Sum(item => item.Quantity)))
             .Where(item => item.Quantity > 0)
             .ToList();
 
+        var incomingByProductId = new Dictionary<Guid, (Product Product, int Quantity)>();
+
         foreach (var item in normalizedItems)
         {
             var product = await productRepository.GetBySkuAsync(item.Sku, cancellationToken)
                 ?? throw new KeyNotFoundException($"Product '{item.Sku}' was not found.");
 
-            cartEntity.Items.Add(new CartItemEntity
+            incomingByProductId[product.Id] = (product, item.Quantity);
+        }
+
+        var trackedByProductId = cartEntity.Items.ToDictionary(item => item.ProductId);
+
+        foreach (var trackedItem in cartEntity.Items.ToList())
+        {
+            if (!incomingByProductId.TryGetValue(trackedItem.ProductId, out var incomingItem))
+            {
+                dbContext.CartItems.Remove(trackedItem);
+                continue;
+            }
+
+            trackedItem.ProductSku = incomingItem.Product.Sku;
+            trackedItem.ProductName = incomingItem.Product.Name;
+            trackedItem.UnitPriceSnapshot = incomingItem.Product.Price;
+            trackedItem.Quantity = incomingItem.Quantity;
+        }
+
+        foreach (var incomingItem in incomingByProductId.Values)
+        {
+            if (trackedByProductId.ContainsKey(incomingItem.Product.Id))
+            {
+                continue;
+            }
+
+            var newCartItem = new CartItemEntity
             {
                 Id = Guid.NewGuid(),
                 CartId = cartEntity.Id,
-                ProductId = product.Id,
-                ProductSku = product.Sku,
-                ProductName = product.Name,
-                UnitPriceSnapshot = product.Price,
-                Quantity = item.Quantity
-            });
+                ProductId = incomingItem.Product.Id,
+                ProductSku = incomingItem.Product.Sku,
+                ProductName = incomingItem.Product.Name,
+                UnitPriceSnapshot = incomingItem.Product.Price,
+                Quantity = incomingItem.Quantity
+            };
+
+            cartEntity.Items.Add(newCartItem);
+            dbContext.CartItems.Add(newCartItem);
         }
 
         cartEntity.UpdatedAtUtc = DateTimeOffset.UtcNow;

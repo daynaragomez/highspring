@@ -100,9 +100,7 @@ public class CheckoutService(
 
         await orderRepository.AddAsync(order, cancellationToken);
 
-        cart.Items.Clear();
-        cart.UpdatedAtUtc = DateTimeOffset.UtcNow;
-        await cartRepository.SaveAsync(cart, cancellationToken);
+        await cartRepository.ClearItemsAsync(cart.Id, cancellationToken);
         await guestCouponStateRepository.SetAppliedCouponCodeAsync(guestSessionId, null, cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

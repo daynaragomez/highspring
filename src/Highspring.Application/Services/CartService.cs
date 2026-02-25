@@ -35,28 +35,29 @@ public class CartService(
 
         if (existing is null)
         {
-            cart.Items.Add(new CartItem
-            {
-                Id = Guid.NewGuid(),
-                CartId = cart.Id,
-                ProductId = product.Id,
-                ProductSku = product.Sku,
-                ProductName = product.Name,
-                UnitPriceSnapshot = product.Price,
-                Quantity = quantity
-            });
+            await cartRepository.UpsertItemAsync(
+                cart.Id,
+                product.Id,
+                product.Sku,
+                product.Name,
+                product.Price,
+                quantity,
+                cancellationToken);
         }
         else
         {
-            existing.Quantity = nextQuantity;
+            await cartRepository.UpsertItemAsync(
+                cart.Id,
+                product.Id,
+                product.Sku,
+                product.Name,
+                product.Price,
+                nextQuantity,
+                cancellationToken);
         }
-
-        cart.UpdatedAtUtc = DateTimeOffset.UtcNow;
-
-        await cartRepository.SaveAsync(cart, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return cart;
+        return await cartRepository.GetOrCreateAsync(guestSessionId, cancellationToken);
     }
 
     public async Task<Cart> SetItemQuantityAsync(string guestSessionId, string sku, int quantity, CancellationToken cancellationToken)
@@ -89,41 +90,37 @@ public class CartService(
 
         if (existing is null)
         {
-            cart.Items.Add(new CartItem
-            {
-                Id = Guid.NewGuid(),
-                CartId = cart.Id,
-                ProductId = product.Id,
-                ProductSku = product.Sku,
-                ProductName = product.Name,
-                UnitPriceSnapshot = product.Price,
-                Quantity = quantity
-            });
+            await cartRepository.UpsertItemAsync(
+                cart.Id,
+                product.Id,
+                product.Sku,
+                product.Name,
+                product.Price,
+                quantity,
+                cancellationToken);
         }
         else
         {
-            existing.Quantity = quantity;
-            existing.ProductName = product.Name;
-            existing.UnitPriceSnapshot = product.Price;
+            await cartRepository.UpsertItemAsync(
+                cart.Id,
+                product.Id,
+                product.Sku,
+                product.Name,
+                product.Price,
+                quantity,
+                cancellationToken);
         }
-
-        cart.UpdatedAtUtc = DateTimeOffset.UtcNow;
-
-        await cartRepository.SaveAsync(cart, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return cart;
+        return await cartRepository.GetOrCreateAsync(guestSessionId, cancellationToken);
     }
 
     public async Task<Cart> RemoveItemAsync(string guestSessionId, string sku, CancellationToken cancellationToken)
     {
         var cart = await cartRepository.GetOrCreateAsync(guestSessionId, cancellationToken);
-        cart.Items.RemoveAll(item => string.Equals(item.ProductSku, sku, StringComparison.OrdinalIgnoreCase));
-        cart.UpdatedAtUtc = DateTimeOffset.UtcNow;
-
-        await cartRepository.SaveAsync(cart, cancellationToken);
+        await cartRepository.RemoveItemAsync(cart.Id, sku, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return cart;
+        return await cartRepository.GetOrCreateAsync(guestSessionId, cancellationToken);
     }
 }
