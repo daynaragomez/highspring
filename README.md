@@ -1,5 +1,7 @@
 # Highspring
 
+[![Automation Smoke (main)](https://github.com/daynaragomez/highspring/actions/workflows/automation-smoke.yml/badge.svg?branch=main)](https://github.com/daynaragomez/highspring/actions/workflows/automation-smoke.yml?query=branch%3Amain)
+
 Automation-ready .NET ecommerce demo with:
 - `Highspring.Web` (Razor Pages UI)
 - `Highspring.Api` (test-control + health endpoints)

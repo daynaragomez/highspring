@@ -11,3 +11,4 @@ dotnet-install.sh
 demo-app/src/Highspring.Web/bin/
 demo-app/src/Highspring.Web/obj/
 demo-app/src/Highspring.Web/wwwroot/lib/
+automation/TestResults/
