@@ -1,0 +1,20 @@
+[
+  {
+    "sku": "HOODIE-CLASSIC",
+    "name": "Classic Hoodie",
+    "price": 49.00,
+    "stockQuantity": 25
+  },
+  {
+    "sku": "SNEAKER-URBAN",
+    "name": "Urban Sneakers",
+    "price": 89.00,
+    "stockQuantity": 20
+  },
+  {
+    "sku": "BACKPACK-TRAVEL",
+    "name": "Travel Backpack",
+    "price": 64.00,
+    "stockQuantity": 15
+  }
+]

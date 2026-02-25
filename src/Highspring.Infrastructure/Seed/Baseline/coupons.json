@@ -1,0 +1,14 @@
+[
+  {
+    "code": "SAVE10",
+    "type": "Percent",
+    "value": 10,
+    "isActive": true
+  },
+  {
+    "code": "TAKE5",
+    "type": "Fixed",
+    "value": 5,
+    "isActive": true
+  }
+]

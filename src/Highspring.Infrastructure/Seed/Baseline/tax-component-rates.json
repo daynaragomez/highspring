@@ -1,0 +1,18 @@
+[
+  {
+    "country": "CA",
+    "stateOrRegion": "QC",
+    "taxCode": "GST",
+    "rate": 0.05,
+    "priority": 1,
+    "isActive": true
+  },
+  {
+    "country": "CA",
+    "stateOrRegion": "QC",
+    "taxCode": "QST",
+    "rate": 0.09975,
+    "priority": 2,
+    "isActive": true
+  }
+]

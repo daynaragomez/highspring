@@ -10,6 +10,7 @@ public class CheckoutService(
     ICartRepository cartRepository,
     IProductRepository productRepository,
     IOrderRepository orderRepository,
+    IGuestCouponStateRepository guestCouponStateRepository,
     IUnitOfWork unitOfWork,
     IDiscountService discountService,
     ITaxCalculator taxCalculator) : ICheckoutService
@@ -40,8 +41,12 @@ public class CheckoutService(
             }
         }
 
+        var appliedCouponCode = string.IsNullOrWhiteSpace(couponCode)
+            ? await guestCouponStateRepository.GetAppliedCouponCodeAsync(guestSessionId, cancellationToken)
+            : couponCode;
+
         var subtotal = MoneyMath.RoundCurrency(cart.Items.Sum(item => item.UnitPriceSnapshot * item.Quantity));
-        var discount = await discountService.CalculateDiscountAsync(subtotal, couponCode, cancellationToken);
+        var discount = await discountService.CalculateDiscountAsync(subtotal, appliedCouponCode, cancellationToken);
         var taxableAmount = MoneyMath.RoundCurrency(Math.Max(0, subtotal - discount));
         var taxLines = await taxCalculator.CalculateAsync(taxableAmount, address.Country, address.StateOrRegion, cancellationToken);
         var taxTotal = MoneyMath.RoundCurrency(taxLines.Sum(line => line.TaxAmount));
@@ -98,6 +103,7 @@ public class CheckoutService(
         cart.Items.Clear();
         cart.UpdatedAtUtc = DateTimeOffset.UtcNow;
         await cartRepository.SaveAsync(cart, cancellationToken);
+        await guestCouponStateRepository.SetAppliedCouponCodeAsync(guestSessionId, null, cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

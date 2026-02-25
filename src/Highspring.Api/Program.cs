@@ -1,4 +1,5 @@
 using Highspring.Application;
+using Highspring.Api;
 using Highspring.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,12 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
+
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Test"))
+{
+    app.MapTestControlEndpoints();
+}
+
 app.MapControllers();
 
 app.Run();

@@ -1,6 +1,8 @@
 using Highspring.Application.Abstractions.Repositories;
+using Highspring.Application.Abstractions.Services;
 using Highspring.Infrastructure.Persistence;
 using Highspring.Infrastructure.Persistence.Repositories;
+using Highspring.Infrastructure.Persistence.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +22,9 @@ public static class DependencyInjection
         services.AddScoped<ICouponRepository, CouponRepository>();
         services.AddScoped<ITaxComponentRateRepository, TaxComponentRateRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IGuestCouponStateRepository, GuestCouponStateRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ITestControlService, TestControlService>();
 
         return services;
     }
