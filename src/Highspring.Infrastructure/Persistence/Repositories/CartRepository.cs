@@ -21,6 +21,7 @@ public class CartRepository(AppDbContext dbContext) : ICartRepository
             };
 
             dbContext.Carts.Add(cart);
+            await dbContext.SaveChangesAsync(cancellationToken);
         }
 
         return MapCart(cart);
@@ -34,13 +35,9 @@ public class CartRepository(AppDbContext dbContext) : ICartRepository
 
     public async Task SaveAsync(Cart cart, CancellationToken cancellationToken)
     {
-        var entity = dbContext.Carts.Local.SingleOrDefault(item => item.Id == cart.Id);
-        if (entity is null)
-        {
-            entity = await dbContext.Carts
-                .Include(item => item.Items)
-                .SingleOrDefaultAsync(item => item.Id == cart.Id, cancellationToken);
-        }
+        var entity = await dbContext.Carts
+            .Include(item => item.Items)
+            .SingleOrDefaultAsync(item => item.Id == cart.Id, cancellationToken);
 
         if (entity is null)
         {
@@ -59,38 +56,18 @@ public class CartRepository(AppDbContext dbContext) : ICartRepository
         entity.CreatedAtUtc = cart.CreatedAtUtc;
         entity.UpdatedAtUtc = cart.UpdatedAtUtc;
 
-        var existingByProductId = entity.Items.ToDictionary(item => item.ProductId);
-        var incomingByProductId = cart.Items.ToDictionary(item => item.ProductId);
-
-        var toRemove = entity.Items
-            .Where(item => !incomingByProductId.ContainsKey(item.ProductId))
-            .ToList();
-
-        foreach (var item in toRemove)
+        entity.Items.Clear();
+        foreach (var item in cart.Items)
         {
-            entity.Items.Remove(item);
-        }
-
-        foreach (var incoming in cart.Items)
-        {
-            if (existingByProductId.TryGetValue(incoming.ProductId, out var existing))
-            {
-                existing.ProductSku = incoming.ProductSku;
-                existing.ProductName = incoming.ProductName;
-                existing.UnitPriceSnapshot = incoming.UnitPriceSnapshot;
-                existing.Quantity = incoming.Quantity;
-                continue;
-            }
-
             entity.Items.Add(new CartItemEntity
             {
-                Id = incoming.Id == Guid.Empty ? Guid.NewGuid() : incoming.Id,
+                Id = item.Id,
                 CartId = cart.Id,
-                ProductId = incoming.ProductId,
-                ProductSku = incoming.ProductSku,
-                ProductName = incoming.ProductName,
-                UnitPriceSnapshot = incoming.UnitPriceSnapshot,
-                Quantity = incoming.Quantity
+                ProductId = item.ProductId,
+                ProductSku = item.ProductSku,
+                ProductName = item.ProductName,
+                UnitPriceSnapshot = item.UnitPriceSnapshot,
+                Quantity = item.Quantity
             });
         }
 
