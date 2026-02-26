@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <RunConfiguration>
+    <!-- Environment variables applied to test runs (dotnet test and Test Explorer when this runsettings is selected) -->
+    <EnvironmentVariables>
+      <HIGHSPRING_HEADLESS>false</HIGHSPRING_HEADLESS>
+    </EnvironmentVariables>
+  </RunConfiguration>
+</RunSettings>
