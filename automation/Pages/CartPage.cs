@@ -42,6 +42,14 @@ public sealed class CartPage(IWebDriver driver, WebDriverWait wait) : BasePage(d
         WaitUntilLoaded();
     }
 
+    public void RemoveItem(string sku)
+    {
+        var line = FindByTestId($"cart-line-{sku}");
+        var removeButton = line.FindElement(By.XPath(".//button[contains(normalize-space(), 'Remove')]"));
+        removeButton.Click();
+        WaitUntilLoaded();
+    }
+
     public void GoToCheckout()
     {
         Wait.Until(d => d.FindElement(By.CssSelector("a[href='/checkout']"))).Click();

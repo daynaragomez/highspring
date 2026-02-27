@@ -82,6 +82,13 @@ Default status on creation: `Candidate`.
   - Risks: `R-001`, `R-006`
   - Status: Candidate
 
+- **TC010_Checkout_Invalid_Details_Blocks_Submission_And_Shows_Validation**
+  - Goal: validate checkout rejects missing/invalid required details and keeps user on checkout page.
+  - Priority: High
+  - Type: Smoke
+  - Risks: `R-003`, `R-006`
+  - Status: Approved
+
 ## 4. E2E Cases
 
 ### Suite: CartE2ESuite

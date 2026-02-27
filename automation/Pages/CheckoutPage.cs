@@ -27,6 +27,26 @@ public sealed class CheckoutPage(IWebDriver driver, WebDriverWait wait) : BasePa
         FindByTestId(TestIds.CheckoutSubmit).Click();
     }
 
+    public void FillInvalidDetailsAndSubmit()
+    {
+        Fill("Input.FullName", "Automation User");
+        Fill("Input.Email", "invalid-email");
+        Fill("Input.Phone", "5551234567");
+        Fill("Input.AddressLine1", string.Empty);
+        Fill("Input.City", "Montreal");
+        Fill("Input.StateOrRegion", "QC");
+        Fill("Input.PostalCode", "H2H2H2");
+        Fill("Input.Country", "CA");
+
+        FindByTestId(TestIds.CheckoutSubmit).Click();
+    }
+
+    public bool ShowsValidationFeedback()
+    {
+        return Driver.PageSource.Contains("required", StringComparison.OrdinalIgnoreCase) ||
+               Driver.PageSource.Contains("valid e-mail", StringComparison.OrdinalIgnoreCase);
+    }
+
     public void WaitForCheckoutResult()
     {
         Wait.Until(_ =>

@@ -33,4 +33,31 @@ public sealed class CartSuiteSmoke : BaseCaseSuiteTest
                 testCase.ApplyPostconditions();
             });
     }
+
+    [Fact]
+    [Trait("Type", "Smoke")]
+    [Trait("Suite", "Cart")]
+    [Trait("Case", "TC005")]
+    public async Task TC005_Remove_Cart_Line_Shows_Empty_State()
+    {
+        await RunCase<TC005_Remove_Cart_Line_Shows_Empty_State>(
+            caseId: "TC005",
+            createCase: (logger, runId, caseExecutionId) => new TC005_Remove_Cart_Line_Shows_Empty_State(
+                Driver,
+                Wait,
+                Settings.BaseUrl,
+                Settings.ApiBaseUrl,
+                logger,
+                runId,
+                caseExecutionId),
+            executeFlow: async testCase =>
+            {
+                await testCase.PreconditionsAsync();
+                testCase.Step1_PrepareOneLineCart();
+                testCase.Step2_RemoveLine();
+                testCase.Step3_ValidateEmptyState();
+                testCase.ValidateExpectedResults();
+                testCase.ApplyPostconditions();
+            });
+    }
 }
