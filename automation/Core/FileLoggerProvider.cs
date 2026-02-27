@@ -5,7 +5,6 @@ namespace Highspring.Automation.Core;
 public sealed class FileLoggerProvider(string logFilePath) : ILoggerProvider
 {
     private readonly object _sync = new();
-    private bool _disposed;
 
     public ILogger CreateLogger(string categoryName)
     {
@@ -14,7 +13,6 @@ public sealed class FileLoggerProvider(string logFilePath) : ILoggerProvider
 
     public void Dispose()
     {
-        _disposed = true;
     }
 
     private sealed class FileLogger(string filePath, string categoryName, object sync) : ILogger
