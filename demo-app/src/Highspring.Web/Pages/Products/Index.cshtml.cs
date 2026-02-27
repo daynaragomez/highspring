@@ -9,6 +9,7 @@ namespace Highspring.Web.Pages.Products;
 public class IndexModel(IStorefrontService storefrontService) : PageModel
 {
     public IReadOnlyList<Product> Products { get; private set; } = [];
+    public string? ErrorMessage { get; private set; }
 
     public async Task OnGetAsync(CancellationToken cancellationToken)
     {
@@ -18,7 +19,17 @@ public class IndexModel(IStorefrontService storefrontService) : PageModel
     public async Task<IActionResult> OnPostAddToCartAsync(string sku, int quantity, CancellationToken cancellationToken)
     {
         var guestSessionId = GuestSessionAccessor.GetOrCreateGuestSessionId(HttpContext);
-        await storefrontService.AddItemAsync(guestSessionId, sku, quantity <= 0 ? 1 : quantity, "CA", "QC", cancellationToken);
-        return RedirectToPage("/Cart/Index");
+
+        try
+        {
+            await storefrontService.AddItemAsync(guestSessionId, sku, quantity <= 0 ? 1 : quantity, "CA", "QC", cancellationToken);
+            return RedirectToPage("/Cart/Index");
+        }
+        catch (InvalidOperationException exception)
+        {
+            ErrorMessage = exception.Message;
+            Products = await storefrontService.GetProductsAsync(cancellationToken);
+            return Page();
+        }
     }
 }
