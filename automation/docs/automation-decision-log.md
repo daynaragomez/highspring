@@ -19,11 +19,12 @@ Record auditable state transitions for test case automation decisions.
 | TC002 | Candidate | 2026-02-27 | QA/Automation | Initial catalog registration | TBD |
 | TC003 | Approved | 2026-02-27 | QA/Automation | High-risk cart entry path retained; implemented for Phase 1 with suite-driven steps and persisted correlation logs | Phase 1 |
 | TC004 | Approved | 2026-02-27 | QA/Automation | High-risk cart mutation retained; implemented for Phase 1 with suite-driven steps and persisted correlation logs | Phase 1 |
-| TC005 | Deferred | 2026-02-27 | QA/Automation | Overlap with selected cart integrity coverage | Phase 2 |
+| TC005 | Approved | 2026-02-27 | QA/Automation | Stakeholder-required coverage: removing a product from the cart in Phase 1; implemented with suite-driven steps and persisted correlation logs | Phase 1 |
 | TC006 | Approved | 2026-02-27 | QA/Automation | Critical checkout completion retained; implemented for Phase 1 with suite-driven steps and persisted correlation logs | Phase 1 |
 | TC007 | Approved | 2026-02-27 | QA/Automation | Confirmation totals retained; implemented for Phase 1 with suite-driven steps and persisted correlation logs | Phase 1 |
 | TC008 | Candidate | 2026-02-27 | QA/Automation | Initial catalog registration | TBD |
 | TC009 | Deferred | 2026-02-27 | QA/Automation | Overlap with selected add-to-cart path | Phase 2 |
+| TC010 | Approved | 2026-02-27 | QA/Automation | Stakeholder-required coverage: checkout with missing/invalid details blocked in Phase 1; implemented with suite-driven steps and persisted correlation logs | Phase 1 |
 | TC101 | Deferred | 2026-02-27 | QA/Automation | Overlap with selected cart risk coverage | Phase 2 |
 | TC102 | Deferred | 2026-02-27 | QA/Automation | Overlap with selected cart risk coverage | Phase 2 |
 | TC103 | Deferred | 2026-02-27 | QA/Automation | Overlap with selected cart risk coverage | Phase 2 |

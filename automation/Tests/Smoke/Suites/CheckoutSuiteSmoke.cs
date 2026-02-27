@@ -60,4 +60,31 @@ public sealed class CheckoutSuiteSmoke : BaseCaseSuiteTest
                 testCase.ApplyPostconditions();
             });
     }
+
+    [Fact]
+    [Trait("Type", "Smoke")]
+    [Trait("Suite", "Checkout")]
+    [Trait("Case", "TC010")]
+    public async Task TC010_Checkout_Invalid_Details_Blocks_Submission_And_Shows_Validation()
+    {
+        await RunCase<TC010_Checkout_Invalid_Details_Blocks_Submission_And_Shows_Validation>(
+            caseId: "TC010",
+            createCase: (logger, runId, caseExecutionId) => new TC010_Checkout_Invalid_Details_Blocks_Submission_And_Shows_Validation(
+                Driver,
+                Wait,
+                Settings.BaseUrl,
+                Settings.ApiBaseUrl,
+                logger,
+                runId,
+                caseExecutionId),
+            executeFlow: async testCase =>
+            {
+                await testCase.PreconditionsAsync();
+                testCase.Step1_OpenCheckoutState();
+                testCase.Step2_SubmitInvalidDetails();
+                testCase.Step3_ValidateErrorFeedbackAndRoute();
+                testCase.ValidateExpectedResults();
+                testCase.ApplyPostconditions();
+            });
+    }
 }
