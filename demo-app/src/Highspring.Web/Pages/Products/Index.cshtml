@@ -13,6 +13,11 @@
         <a asp-page="/Cart/Index" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold hover:bg-slate-100">View cart</a>
     </div>
 
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">@Model.ErrorMessage</div>
+    }
+
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         @foreach (var product in Model.Products)
         {
