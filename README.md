@@ -4,6 +4,8 @@
 
 This repository is a **test-first QA challenge submission** for the ecommerce cart + checkout journey.
 
+Start here for automation implementation details and conventions: [automation/README.md](automation/README.md).
+
 In this submission you will find:
 - End-to-end test design artifacts with case prioritization and rationale.
 - Implemented automation for the required cart/checkout scenarios.

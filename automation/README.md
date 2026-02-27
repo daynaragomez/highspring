@@ -2,48 +2,67 @@
 
 This folder contains Selenium UI automation for Highspring using C# + xUnit.
 
-## Architecture
+## Current Architecture
 
-- `Config/` → environment and test settings
-- `Core/` → driver lifecycle, waits, base test class
+- `Config/` → environment and runtime test settings
+- `Core/` → driver lifecycle, waits, file logger provider
+- `Api/` → test-control client for deterministic setup/assertions
 - `Selectors/` → centralized `data-testid` constants
 - `Pages/` → page object model (UI interactions only)
-- `Flows/` → reusable business journeys across pages
-- `Api/` → test-control API client for deterministic setup
-- `Tests/Smoke` → fast deploy gate scenarios
-- `Tests/E2E` → business-flow validations
+- `Tests/BaseTestCase.cs` → shared case helpers (scoped logging, common assertions)
+- `Tests/BaseCaseSuiteTest.cs` → shared suite orchestration (`RunCase`)
+- `Tests/Smoke/Cases` → one smoke test case per file (`TCxxx_...`)
+- `Tests/Smoke/Suites` → orchestration-only smoke suites
+- `Tests/E2E/Cases` → one e2e test case per file (`TCxxx_...`)
+- `Tests/E2E/Suites` → orchestration-only e2e suites
 
-## Naming Conventions
+## Test Organization Rules
 
-- File name matches class name.
-- Test classes end with `Tests`.
-- Test methods use `Action_Condition_ExpectedResult` style.
-- Category traits:
-  - `[Trait("Category", "Smoke")]`
-  - `[Trait("Category", "E2E")]`
+- One automated case = one case class file (`TCxxx_...`).
+- Suite methods orchestrate case lifecycle only:
+  - `Preconditions`
+  - `Step1..StepN`
+  - `ValidateExpectedResults`
+  - `ApplyPostconditions`
+  - `ApplyFinallyCleanup`
+- Business assertions live in case classes, not in suite infrastructure.
+- Page classes should not contain business assertions.
 
-## Test Writing Rules
+## Trait Model (Filtering)
 
-- Keep UI selectors in `Selectors/TestIds.cs`.
-- Keep page interactions in `Pages/*` and avoid business assertions there.
-- Keep reusable journey steps in `Flows/*`.
-- Keep test assertions inside `Tests/*`.
-- Avoid `Thread.Sleep`; use explicit waits from `Core/Waits.cs`.
+The active trait model is:
+- `[Trait("Type", "Smoke")]` or `[Trait("Type", "E2E")]`
+- `[Trait("Suite", "<domain>")]`
+- `[Trait("Case", "TCxxx")]`
+
+`Category` traits are deprecated in this repo.
+
+## Logging & Evidence
+
+- Each case execution receives:
+  - `RunId`
+  - `CaseExecutionId`
+- Logs are persisted to:
+  - `automation/TestResults/logs/`
+- Test execution is configured to run sequentially at assembly level to avoid shared reset collisions.
 
 ## Local Execution
 
 ```bash
 # Smoke only
-dotnet test automation/Highspring.Automation.csproj --filter "Category=Smoke"
+dotnet test automation/Highspring.Automation.csproj --filter "Type=Smoke"
 
 # E2E only
-dotnet test automation/Highspring.Automation.csproj --filter "Category=E2E"
+dotnet test automation/Highspring.Automation.csproj --filter "Type=E2E"
+
+# Single case
+dotnet test automation/Highspring.Automation.csproj --filter "Case=TC006"
 
 # All tests
 dotnet test automation/Highspring.Automation.csproj
 
 # Headed mode (visible browser)
-HIGHSPRING_HEADLESS=false dotnet test automation/Highspring.Automation.csproj --filter "Category=Smoke"
+HIGHSPRING_HEADLESS=false dotnet test automation/Highspring.Automation.csproj --filter "Type=Smoke"
 ```
 
 ## CI Cadence
@@ -57,14 +76,12 @@ Workflow: `.github/workflows/automation-tests.yml`
 
 ## PR Checklist
 
-Use this checklist for any automation PR:
-
 - [ ] New/changed selectors are centralized in `Selectors/TestIds.cs`.
-- [ ] Page interactions are implemented in `Pages/*` (not directly in tests).
-- [ ] Reusable user journeys are placed in `Flows/*` when needed.
-- [ ] Test methods are tagged with the correct category (`Smoke` or `E2E`).
+- [ ] Page interactions are implemented in `Pages/*` (not directly in suites).
+- [ ] New automation case has a dedicated `TCxxx_...` case file.
+- [ ] Suite method is orchestration-only and tagged with `Type`, `Suite`, `Case`.
 - [ ] No `Thread.Sleep` added; explicit waits are used.
 - [ ] Local verification done with relevant filters:
-  - `dotnet test ... --filter "Category=Smoke"`
-  - `dotnet test ... --filter "Category=E2E"` (if flow/business logic changed)
-- [ ] Assertions validate business outcome, not only navigation/UI presence.
+  - `dotnet test ... --filter "Type=Smoke"`
+  - `dotnet test ... --filter "Type=E2E"` (if flow/business logic changed)
+- [ ] Decision log and case documentation are updated when scope/status changes.
