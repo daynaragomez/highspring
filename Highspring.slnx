@@ -1,8 +1,11 @@
 <Solution>
-  <Folder Name="/src/">
-    <Project Path="src/Highspring.Api/Highspring.Api.csproj" />
-    <Project Path="src/Highspring.Application/Highspring.Application.csproj" />
-    <Project Path="src/Highspring.Infrastructure/Highspring.Infrastructure.csproj" />
-    <Project Path="src/Highspring.Web/Highspring.Web.csproj" />
+  <Folder Name="/automation/">
+    <Project Path="automation/Highspring.Automation.csproj" />
+  </Folder>
+  <Folder Name="/demo-app/src/">
+    <Project Path="demo-app/src/Highspring.Api/Highspring.Api.csproj" />
+    <Project Path="demo-app/src/Highspring.Application/Highspring.Application.csproj" />
+    <Project Path="demo-app/src/Highspring.Infrastructure/Highspring.Infrastructure.csproj" />
+    <Project Path="demo-app/src/Highspring.Web/Highspring.Web.csproj" />
   </Folder>
 </Solution>

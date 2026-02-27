@@ -1,7 +1,7 @@
 services:
   web:
     build:
-      context: .
+      context: demo-app
       dockerfile: src/Highspring.Web/Dockerfile
     ports:
       - "8080:8080"
@@ -14,7 +14,7 @@ services:
 
   api:
     build:
-      context: .
+      context: demo-app
       dockerfile: src/Highspring.Api/Dockerfile
     ports:
       - "8081:8080"

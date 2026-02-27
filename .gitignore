@@ -4,9 +4,15 @@ obj/
 *.swp
 *.suo
 .vscode/
+.DS_Store
 .ds_store
 *.tmp
 dotnet-install.sh
 src/Highspring.Web/bin/
 src/Highspring.Web/obj/
+/.vs
+demo-app/src/Highspring.Web/bin/
+demo-app/src/Highspring.Web/obj/
+demo-app/src/Highspring.Web/wwwroot/lib/
+automation/TestResults/
 /.vs

@@ -1,291 +1,171 @@
-# Highspring
+# Highspring — QA Challenge Submission
 
-Automation-ready .NET ecommerce demo with:
-- `Highspring.Web` (Razor Pages UI)
-- `Highspring.Api` (test-control + health endpoints)
-- `PostgreSQL` (via Docker Compose)
+[![Automation Tests (main)](https://github.com/daynaragomez/highspring/actions/workflows/automation-tests.yml/badge.svg?branch=main)](https://github.com/daynaragomez/highspring/actions/workflows/automation-tests.yml?query=branch%3Amain)
 
-This README is focused on **building reliable Selenium automation** for cart, discount, tax, and checkout flows.
+This repository is a **test-first QA challenge submission** for the ecommerce cart + checkout journey.
 
-## Quick Start (Docker)
+In this submission you will find:
+- End-to-end test design artifacts with case prioritization and rationale.
+- Implemented automation for the required cart/checkout scenarios.
+- Reproducible execution output via trait-based runs (`Type`, `Suite`, `Case`) and persisted logs.
 
-```bash
-docker compose up -d --build
-```
+ ---
 
-Services:
-- Web UI: `http://localhost:8080`
-- API: `http://localhost:8081`
-- PostgreSQL: `localhost:5432`
+ ## Challenge Deliverables (Mapped)
 
-Health checks:
-- Web: `GET http://localhost:8080/health`
-- API: `GET http://localhost:8081/health`
+ ### 1) Test Design Document
 
-Reset test data to deterministic baseline:
+ Core design artifacts:
+ - [automation/docs/master-test-plan.md](automation/docs/master-test-plan.md)
+ - [automation/docs/test-design-specification.md](automation/docs/test-design-specification.md)
+ - [automation/docs/test-case-catalog.md](automation/docs/test-case-catalog.md)
+ - [automation/docs/automation-decision-log.md](automation/docs/automation-decision-log.md)
 
-```bash
-curl -i -X POST http://localhost:8081/internal/test/v1/reset
-```
+ Detailed case specifications:
+ - [automation/docs/test-cases](automation/docs/test-cases)
 
----
+ These documents cover:
+ - Candidate/approved/deferred lifecycle.
+ - Automation prioritization rationale (risk, business value, release impact).
+ - Per-case structure: preconditions, steps, expected results, postconditions, cleanup.
 
-## What To Automate
+ ### 2) Automation Code
 
-Core user-visible behaviors:
-1. Add item to cart
-2. Update cart quantity
-3. Remove item from cart
-4. Apply coupon discount
-5. Validate tax calculation
-6. Complete checkout
-7. Validate order confirmation totals
-8. Validate cart is cleared after checkout
+ Framework:
+ - .NET + Selenium + xUnit
 
-Business expectations:
-- Cart quantity changes are stable across repeated operations.
-- Discount is applied before tax.
-- Tax is computed from taxable base.
-- Checkout decrements stock and clears cart.
+ Automation project:
+ - [automation/Highspring.Automation.csproj](automation/Highspring.Automation.csproj)
 
----
+ Architecture implemented:
+ - Suite orchestration base: [automation/Tests/BaseCaseSuiteTest.cs](automation/Tests/BaseCaseSuiteTest.cs)
+ - Case behavior base: [automation/Tests/BaseTestCase.cs](automation/Tests/BaseTestCase.cs)
+ - One case per file (`TCxxx_...`) under `Smoke/Cases` and `E2E/Cases`
+ - Suite-level execution intent under `Smoke/Suites` and `E2E/Suites`
+ - Traits for filtering:
+  - `Type=Smoke|E2E`
+  - `Suite=<domain>`
+  - `Case=<TC-ID>`
 
-## Navigation Map (UI)
+ ### 3) Test Execution Output
 
-Base URL: `http://localhost:8080`
+ Evidence sources:
+ - Console test summaries from `dotnet test`
+ - Per-case persisted logs under:
+  - `automation/TestResults/logs/`
+- GitHub Actions run history and artifacts:
+  - [Automation Tests workflow runs](https://github.com/daynaragomez/highspring/actions/workflows/automation-tests.yml)
 
-- Home: `/`
-- Product list: `/products`
-- Product details: `/products/{sku}`
-- Cart: `/cart`
-- Checkout: `/checkout`
-- Checkout confirmation: `/checkout/confirmation/{orderId}`
+ ### 4) Optional Bonus
 
-Typical flow for Selenium:
-1. Open `/products`
-2. Add product(s)
-3. Open `/cart`
-4. Update quantity / remove / apply coupon
-5. Open `/checkout`
-6. Submit checkout form
-7. Assert redirect to `/checkout/confirmation/{orderId}`
-8. Assert order totals and post-checkout empty cart
+ Included:
+ - CI workflow with smoke/e2e cadence:
+  - [.github/workflows/automation-tests.yml](.github/workflows/automation-tests.yml)
 
----
+ Not yet included:
+ - Data-driven permutations across multiple products/quantities at scale (can be added next).
 
-## Stable Selectors (`data-testid`)
+ ---
 
-### Home / Product Discovery
-- `page-home`
-- `product-card-{SKU}`
-- `add-to-cart-{SKU}`
+## Execution Evidence (GitHub Actions)
 
-### Product List & Details
-- `page-products`
-- `page-product-details`
-- `product-card-{SKU}`
-- `add-to-cart-{SKU}`
-
-### Cart
-- `page-cart`
-- `cart-line-{SKU}`
-- `qty-input-{SKU}`
-- `apply-discount-input`
-- `apply-discount-button`
-- `subtotal-value`
-- `discount-total`
-- `tax-total`
-- `order-total`
-
-### Checkout
-- `page-checkout`
-- `checkout-submit`
-- `subtotal-value`
-- `discount-total`
-- `tax-total`
-- `order-total`
-
-### Confirmation
-- `page-checkout-confirmation`
-- `order-confirmation-id`
-- `subtotal-value`
-- `discount-total`
-- `tax-total`
-- `order-total`
+- Workflow status badge is shown at the top of this README.
+- Full run history is available at:
+  - [Automation Tests runs](https://github.com/daynaragomez/highspring/actions/workflows/automation-tests.yml)
+- Each run includes:
+  - smoke/e2e test logs,
+  - run metadata (commit, timestamp, duration),
+  - downloadable artifacts when produced by the workflow.
 
 ---
 
-## Baseline Seed Data (Deterministic)
+ ## Requirement Coverage Matrix
 
-### Products
-- `HOODIE-CLASSIC` — 49.00
-- `SNEAKER-URBAN` — 89.00
-- `BACKPACK-TRAVEL` — 64.00
+ Required challenge behaviors and current automated coverage:
 
-### Coupons
-- `SAVE10` — 10% off
-- `TAKE5` — fixed 5.00 off
+ 1. **Adding a product to the cart**
+   - Case: `TC003`
+   - Suite: [automation/Tests/Smoke/Suites/ProductsSuiteSmoke.cs](automation/Tests/Smoke/Suites/ProductsSuiteSmoke.cs)
+   - Implementation: [automation/Tests/Smoke/Cases/TC003_Add_To_Cart_From_Products_Creates_Cart_Line.cs](automation/Tests/Smoke/Cases/TC003_Add_To_Cart_From_Products_Creates_Cart_Line.cs)
 
-### Taxes (CA/QC)
-- `GST` = 5%
-- `QST` = 9.975%
+ 2. **Removing a product from the cart**
+   - Case: `TC005`
+   - Suite: [automation/Tests/Smoke/Suites/CartSuiteSmoke.cs](automation/Tests/Smoke/Suites/CartSuiteSmoke.cs)
+   - Implementation: [automation/Tests/Smoke/Cases/TC005_Remove_Cart_Line_Shows_Empty_State.cs](automation/Tests/Smoke/Cases/TC005_Remove_Cart_Line_Shows_Empty_State.cs)
 
----
+ 3. **Updating product quantity**
+   - Case: `TC004`
+   - Suite: [automation/Tests/Smoke/Suites/CartSuiteSmoke.cs](automation/Tests/Smoke/Suites/CartSuiteSmoke.cs)
+   - Implementation: [automation/Tests/Smoke/Cases/TC004_Cart_Quantity_Update_Reflects_In_Line_And_Total.cs](automation/Tests/Smoke/Cases/TC004_Cart_Quantity_Update_Reflects_In_Line_And_Total.cs)
 
-## Pricing Rules for Assertions
+ 4. **Proceeding to checkout with valid details**
+   - Case: `TC006`
+   - Suite: [automation/Tests/Smoke/Suites/CheckoutSuiteSmoke.cs](automation/Tests/Smoke/Suites/CheckoutSuiteSmoke.cs)
+   - Implementation: [automation/Tests/Smoke/Cases/TC006_Checkout_Submission_Redirects_To_Confirmation.cs](automation/Tests/Smoke/Cases/TC006_Checkout_Submission_Redirects_To_Confirmation.cs)
 
-- `subtotal = sum(unitPrice * quantity)`
-- `discount = coupon(subtotal)`
-- `taxableBase = max(0, subtotal - discount)`
-- `taxTotal = sum(taxLines over taxableBase)`
-- `grandTotal = taxableBase + taxTotal`
+ 5. **Attempting checkout with missing/invalid details**
+   - Case: `TC010`
+   - Suite: [automation/Tests/Smoke/Suites/CheckoutSuiteSmoke.cs](automation/Tests/Smoke/Suites/CheckoutSuiteSmoke.cs)
+   - Implementation: [automation/Tests/Smoke/Cases/TC010_Checkout_Invalid_Details_Blocks_Submission_And_Shows_Validation.cs](automation/Tests/Smoke/Cases/TC010_Checkout_Invalid_Details_Blocks_Submission_And_Shows_Validation.cs)
 
-Rounding behavior uses currency-safe rounding at each pricing stage.
+ Note: “invalid payment” is not represented in the current mock UI/domain model; the invalid-checkout requirement is covered via invalid/missing required checkout details.
 
-Example (Hoodie 49.00 with `SAVE10` in CA/QC):
-- Subtotal = 49.00
-- Discount = 4.90
-- Taxable base = 44.10
-- GST = 2.21
-- QST = 4.40
-- Tax total = 6.61
-- Grand total = 50.71
+ ---
 
----
+ ## How to Run (Reviewer Quick Path)
 
-## Test-Control API (for Selenium Setup / Assertions)
+ ### Start app stack
 
-Base URL: `http://localhost:8081/internal/test/v1`
+ ```bash
+ docker compose up -d --build
+ ```
 
-> Available only in `Development` and `Test` environments.
+ Endpoints:
+ - Web: `http://localhost:8080`
+ - API: `http://localhost:8081`
 
-### 1) Reset baseline
-`POST /reset`
+ ### Build automation
 
-```bash
-curl -i -X POST http://localhost:8081/internal/test/v1/reset
-```
+ ```bash
+ dotnet build automation/Highspring.Automation.csproj
+ ```
 
-### 2) Set product stock
-`POST /products/{sku}/stock`
+ ### Run by execution type
 
-```bash
-curl -i \
-  -H "Content-Type: application/json" \
-  -d '{"quantity":1}' \
-  http://localhost:8081/internal/test/v1/products/HOODIE-CLASSIC/stock
-```
+ ```bash
+ # Smoke gate
+ dotnet test automation/Highspring.Automation.csproj --filter "Type=Smoke"
 
-### 3) Upsert cart items by guest session
-`POST /carts/{guestSessionId}/items`
+ # E2E regression
+ dotnet test automation/Highspring.Automation.csproj --filter "Type=E2E"
+ ```
 
-```bash
-curl -i \
-  -H "Content-Type: application/json" \
-  -d '{"items":[{"sku":"HOODIE-CLASSIC","quantity":1}]}' \
-  http://localhost:8081/internal/test/v1/carts/guest-a/items
-```
+ ### Run a single case
 
-### 4) Apply/remove coupon by guest session
-`POST /carts/{guestSessionId}/coupon`
+ ```bash
+ dotnet test automation/Highspring.Automation.csproj --filter "Case=TC006"
+ ```
 
-```bash
-curl -i \
-  -H "Content-Type: application/json" \
-  -d '{"couponCode":"SAVE10"}' \
-  http://localhost:8081/internal/test/v1/carts/guest-a/coupon
-```
+ ### Headed (non-headless) run
 
-Remove coupon:
+ ```bash
+ HIGHSPRING_HEADLESS=false dotnet test automation/Highspring.Automation.csproj --filter "Type=Smoke"
+ ```
 
-```bash
-curl -i \
-  -H "Content-Type: application/json" \
-  -d '{"couponCode":null}' \
-  http://localhost:8081/internal/test/v1/carts/guest-a/coupon
-```
+ ---
 
-### 5) Read order snapshot (strong assertion source)
-`GET /orders/{orderId}`
+ ## Test Stability Notes
 
-```bash
-curl -i http://localhost:8081/internal/test/v1/orders/<order-id>
-```
+ - Tests are configured to run sequentially at assembly level to avoid shared-state reset collisions.
+ - Baseline reset endpoint used by tests:
+  - `POST /internal/test/v1/reset`
+ - Stable selector strategy uses `data-testid` values from the web app.
 
-Use this endpoint to validate:
-- persisted subtotal / discount / tax / grand total
-- tax lines (`GST`, `QST`, rates, taxable base)
-- purchased items and quantities
+ ---
 
----
+ ## Reviewer Navigation
 
-## Selenium Implementation Notes
-
-### Guest session behavior
-The app uses cookie `highspring_guest_session` to identify guest carts.
-- Reuse browser context to keep same cart.
-- New browser profile/session creates a new cart.
-
-### Form posting and anti-forgery
-Razor Pages forms include anti-forgery tokens.
-- In Selenium, normal click/submit handles this automatically.
-- For direct HTTP automation, preserve cookies and include `__RequestVerificationToken`.
-
-### Recommended waiting strategy
-- Wait for URL change after submits (`/cart`, `/checkout`, confirmation route).
-- Wait for key test IDs before asserting values.
-- Avoid brittle CSS structure selectors; prefer `data-testid`.
-
----
-
-## Suggested End-to-End Selenium Scenarios
-
-### Scenario A: Core Cart Mutations
-1. Reset baseline via API
-2. Go to `/products`
-3. Add `HOODIE-CLASSIC` three times
-4. Assert cart quantity is `3`
-5. Update quantity to `5`, then `2`
-6. Remove line item
-7. Assert empty cart message
-8. Re-add same SKU and assert quantity is `1`
-
-### Scenario B: Discount + Tax
-1. Add `HOODIE-CLASSIC`
-2. Apply `SAVE10`
-3. Assert:
-   - `discount-total = 4.90`
-   - `tax-total = 6.61`
-   - `order-total = 50.71`
-
-### Scenario C: Checkout + Snapshot Validation
-1. Add item(s), optionally apply coupon
-2. Complete checkout form at `/checkout`
-3. Capture `orderId` from confirmation page (`order-confirmation-id`)
-4. Call `GET /internal/test/v1/orders/{orderId}`
-5. Assert API totals/tax lines match UI confirmation
-6. Open `/cart` and assert cart is empty
-
----
-
-## Troubleshooting
-
-- Reset database state:
-
-```bash
-docker compose down -v --remove-orphans
-docker compose up -d --build
-curl -i -X POST http://localhost:8081/internal/test/v1/reset
-```
-
-- Check container logs:
-
-```bash
-docker compose logs web --tail=200
-docker compose logs api --tail=200
-```
-
-- If tests are flaky, verify:
-  - test starts with `/internal/test/v1/reset`
-  - Selenium session is not reused unexpectedly across tests
-  - assertions use `data-testid` and explicit waits
+If you review only three things, start here:
+- [automation/docs/automation-decision-log.md](automation/docs/automation-decision-log.md)
+- [automation/Tests/Smoke/Suites](automation/Tests/Smoke/Suites)
+- [automation/Tests/E2E/Suites](automation/Tests/E2E/Suites)
