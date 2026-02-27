@@ -252,13 +252,16 @@ Local run commands:
 
 ```bash
 # Smoke only
-dotnet test automation/Highspring.Automation.csproj --filter "Category=Smoke"
+dotnet test automation/Highspring.Automation.csproj --filter "Type=Smoke"
 
 # E2E only
-dotnet test automation/Highspring.Automation.csproj --filter "Category=E2E"
+dotnet test automation/Highspring.Automation.csproj --filter "Type=E2E"
+
+# Single case
+dotnet test automation/Highspring.Automation.csproj --filter "Case=TC006"
 
 # Headed run (visible Chrome) for local demo/debug
-HIGHSPRING_HEADLESS=false dotnet test automation/Highspring.Automation.csproj --filter "Category=Smoke"
+HIGHSPRING_HEADLESS=false dotnet test automation/Highspring.Automation.csproj --filter "Type=Smoke"
 ```
 
 CI cadence (GitHub Actions `Automation Tests`):
