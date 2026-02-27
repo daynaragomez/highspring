@@ -53,6 +53,8 @@ In this submission you will find:
  - Console test summaries from `dotnet test`
  - Per-case persisted logs under:
   - `automation/TestResults/logs/`
+- GitHub Actions run history and artifacts:
+  - [Automation Tests workflow runs](https://github.com/daynaragomez/highspring/actions/workflows/automation-tests.yml)
 
  ### 4) Optional Bonus
 
@@ -64,6 +66,18 @@ In this submission you will find:
  - Data-driven permutations across multiple products/quantities at scale (can be added next).
 
  ---
+
+## Execution Evidence (GitHub Actions)
+
+- Workflow status badge is shown at the top of this README.
+- Full run history is available at:
+  - [Automation Tests runs](https://github.com/daynaragomez/highspring/actions/workflows/automation-tests.yml)
+- Each run includes:
+  - smoke/e2e test logs,
+  - run metadata (commit, timestamp, duration),
+  - downloadable artifacts when produced by the workflow.
+
+---
 
  ## Requirement Coverage Matrix
 
