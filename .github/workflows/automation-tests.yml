@@ -75,7 +75,7 @@ jobs:
           exit 1
 
       - name: Run Selenium smoke test
-        run: dotnet test automation/Highspring.Automation.csproj --filter "Category=Smoke" --logger "trx;LogFileName=smoke.trx"
+        run: dotnet test automation/Highspring.Automation.csproj --filter "Type=Smoke" --logger "trx;LogFileName=smoke.trx"
 
       - name: Capture docker logs
         if: always()
@@ -144,7 +144,7 @@ jobs:
           exit 1
 
       - name: Run Selenium E2E suite
-        run: dotnet test automation/Highspring.Automation.csproj --filter "Category=E2E" --logger "trx;LogFileName=e2e.trx"
+        run: dotnet test automation/Highspring.Automation.csproj --filter "Type=E2E" --logger "trx;LogFileName=e2e.trx"
 
       - name: Capture docker logs
         if: always()
