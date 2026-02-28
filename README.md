@@ -11,6 +11,10 @@ In this submission you will find:
 - Implemented automation for the required cart/checkout scenarios.
 - Reproducible execution output via trait-based runs (`Type`, `Suite`, `Case`) and persisted logs.
 
+Key run result:
+
+![E2E Run Summary](docs/images/evidence/e2e-run-summary.png)
+
  ---
 
  ## Challenge Deliverables (Mapped)
@@ -78,6 +82,13 @@ In this submission you will find:
   - smoke/e2e test logs,
   - run metadata (commit, timestamp, duration),
   - downloadable artifacts when produced by the workflow.
+
+---
+
+## See More Results
+
+- Additional screenshots (website + CI/reporting): [docs/images/evidence](docs/images/evidence)
+- GitHub Actions run history and artifacts: [Automation Tests workflow runs](https://github.com/daynaragomez/highspring/actions/workflows/automation-tests.yml)
 
 ---
 
