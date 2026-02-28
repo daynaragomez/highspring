@@ -1,5 +1,6 @@
 using Highspring.Automation.Core;
 using Microsoft.Extensions.Logging;
+using OpenQA.Selenium;
 
 namespace Highspring.Automation.Tests;
 
@@ -14,15 +15,15 @@ public abstract class BaseCaseSuiteTest : BaseUiTest
         var runId = Guid.NewGuid();
         var caseExecutionId = Guid.NewGuid();
 
-        var workspaceRoot = ResolveWorkspaceRoot();
-        var logsDirectory = Path.Combine(workspaceRoot, "automation", "TestResults", "logs");
+        var projectDirectory = ResolveAutomationProjectDirectory();
+        var logsDirectory = Path.Combine(projectDirectory, "TestResults", "logs");
         Directory.CreateDirectory(logsDirectory);
 
         var logFilePath = Path.Combine(logsDirectory, $"{caseId}-{DateTimeOffset.UtcNow:yyyyMMdd-HHmmss}-{caseExecutionId}.log");
 
         using var loggerFactory = LoggerFactory.Create(builder =>
         {
-            builder.SetMinimumLevel(LogLevel.Information);
+            builder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Information);
             builder.AddProvider(new FileLoggerProvider(logFilePath));
         });
 
@@ -33,29 +34,77 @@ public abstract class BaseCaseSuiteTest : BaseUiTest
         {
             await executeFlow(testCase);
         }
+        catch (Exception ex)
+        {
+            var screenshotPath = TryCaptureFailureScreenshot(caseId, caseExecutionId);
+            if (!string.IsNullOrWhiteSpace(screenshotPath))
+            {
+                logger.LogWarning(ex, "Case {CaseId} failed. Screenshot saved at {ScreenshotPath}", caseId, screenshotPath);
+            }
+            else
+            {
+                logger.LogWarning(ex, "Case {CaseId} failed. Screenshot capture was not available.", caseId);
+            }
+
+            throw;
+        }
         finally
         {
             testCase.ApplyFinallyCleanup();
         }
     }
 
-    private static string ResolveWorkspaceRoot()
+    private static string ResolveAutomationProjectDirectory()
     {
-        var currentDirectory = Directory.GetCurrentDirectory();
-        if (Directory.Exists(Path.Combine(currentDirectory, "automation")))
+        var candidates = new[]
         {
-            return currentDirectory;
-        }
+            Directory.GetCurrentDirectory(),
+            AppContext.BaseDirectory
+        };
 
-        if (string.Equals(Path.GetFileName(currentDirectory), "automation", StringComparison.OrdinalIgnoreCase))
+        foreach (var candidate in candidates)
         {
-            var parentDirectory = Directory.GetParent(currentDirectory);
-            if (parentDirectory is not null)
+            var directory = new DirectoryInfo(candidate);
+            while (directory is not null)
             {
-                return parentDirectory.FullName;
+                var csprojPath = Path.Combine(directory.FullName, "Highspring.Automation.csproj");
+                if (File.Exists(csprojPath))
+                {
+                    return directory.FullName;
+                }
+
+                directory = directory.Parent;
             }
         }
 
-        return currentDirectory;
+        throw new InvalidOperationException("Could not locate Highspring.Automation.csproj to resolve deterministic log output path.");
+    }
+
+    private string? TryCaptureFailureScreenshot(string caseId, Guid caseExecutionId)
+    {
+        try
+        {
+            if (Driver is not ITakesScreenshot screenshotDriver)
+            {
+                return null;
+            }
+
+            var projectDirectory = ResolveAutomationProjectDirectory();
+            var screenshotsDirectory = Path.Combine(projectDirectory, "TestResults", "screenshots");
+            Directory.CreateDirectory(screenshotsDirectory);
+
+            var screenshotPath = Path.Combine(
+                screenshotsDirectory,
+                $"{caseId}-FAIL-{DateTimeOffset.UtcNow:yyyyMMdd-HHmmss}-{caseExecutionId}.png");
+
+            var screenshot = screenshotDriver.GetScreenshot();
+            screenshot.SaveAsFile(screenshotPath);
+
+            return screenshotPath;
+        }
+        catch
+        {
+            return null;
+        }
     }
 }
