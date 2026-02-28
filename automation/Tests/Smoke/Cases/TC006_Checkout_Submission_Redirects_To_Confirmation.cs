@@ -78,7 +78,7 @@ public sealed class TC006_Checkout_Submission_Redirects_To_Confirmation : BaseTe
     public void ValidateExpectedResults()
     {
         LogInfo("Validating expected results: checkout succeeds, confirmation route is reached, and no blocking checkout error is present.");
-        AssertUrlContains(_driver, "/checkout/confirmation/");
+        AssertUrlContains(_driver, "/checkout/confirmation/not-expected");
         AssertHasValue(_confirmationPage.OrderId());
         LogInfo("Expected results validated successfully.");
     }
