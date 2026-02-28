@@ -90,6 +90,8 @@ jobs:
           name: automation-smoke-results
           path: |
             automation/TestResults/**/*.trx
+            automation/TestResults/logs/**/*.log
+            automation/TestResults/screenshots/**/*.png
             artifacts/docker-compose.log
           if-no-files-found: warn
 
@@ -159,6 +161,8 @@ jobs:
           name: automation-e2e-results
           path: |
             automation/TestResults/**/*.trx
+            automation/TestResults/logs/**/*.log
+            automation/TestResults/screenshots/**/*.png
             artifacts/docker-compose.log
           if-no-files-found: warn
 
