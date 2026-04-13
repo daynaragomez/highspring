@@ -1,0 +1,38 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Ecommerce Demo";
+}
+
+<section class="space-y-10" data-testid="page-home">
+    <div class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+        <div class="max-w-3xl space-y-4">
+            <p class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">New Collection</p>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">Automation-ready ecommerce demo</h1>
+            <p class="text-base leading-relaxed text-slate-600">Use deterministic routes, stable test IDs, and test-control APIs to run reliable Selenium suites.</p>
+            <div class="flex flex-wrap items-center gap-3 pt-2">
+                <a asp-page="/Products/Index" class="rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800">Browse products</a>
+                <a asp-page="/Cart/Index" class="rounded-lg border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-100">Open cart</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        @foreach (var product in Model.Products.Take(3))
+        {
+            <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-testid="product-card-@product.Sku">
+                <h2 class="text-lg font-semibold text-slate-900">@product.Name</h2>
+                <p class="mt-2 text-sm text-slate-600">SKU: @product.Sku</p>
+                <p class="mt-4 text-xl font-bold text-slate-900">$@product.Price.ToString("0.00")</p>
+                <div class="mt-4 flex gap-3">
+                    <a asp-page="/Products/Details" asp-route-sku="@product.Sku" class="flex-1 rounded-lg border border-slate-300 px-4 py-2 text-center text-sm font-semibold text-slate-700 hover:bg-slate-100">View details</a>
+                    <form method="post" asp-page-handler="AddToCart" class="flex-1">
+                        <input type="hidden" name="sku" value="@product.Sku" />
+                        <input type="hidden" name="quantity" value="1" />
+                        <button type="submit" data-testid="add-to-cart-@product.Sku" class="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">Add to cart</button>
+                    </form>
+                </div>
+            </article>
+        }
+    </div>
+</section>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DagoShopFlow Store</title>
+    <script type="importmap"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/DagoShopFlow.Web.styles.css" asp-append-version="true" />
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
+    <header>
+        <nav class="border-b border-slate-200 bg-white/90 backdrop-blur">
+            <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
+                <a asp-area="" asp-page="/Index" class="text-lg font-semibold tracking-tight text-slate-900">DagoShopFlow Store</a>
+                <div class="flex items-center gap-6 text-sm font-medium text-slate-600">
+                    <a asp-area="" asp-page="/Index" class="hover:text-slate-900">Home</a>
+                    <a asp-area="" asp-page="/Products/Index" class="hover:text-slate-900">Products</a>
+                    <a asp-area="" asp-page="/Cart/Index" class="hover:text-slate-900">Cart</a>
+                    <a asp-area="" asp-page="/Privacy" class="hover:text-slate-900">Privacy</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="mx-auto w-full max-w-6xl px-6 py-10">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-t border-slate-200 bg-white">
+        <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5 text-sm text-slate-500">
+            <span>&copy; 2026 DagoShopFlow Store</span>
+            <a asp-area="" asp-page="/Privacy" class="hover:text-slate-700">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
