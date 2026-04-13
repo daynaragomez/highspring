@@ -2,7 +2,7 @@ using Highspring.Application.Abstractions.Services;
 using Highspring.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Highspring.Application;
+namespace DagoShopFlow.Application;
 
 public static class DependencyInjection
 {

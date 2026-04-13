@@ -1,4 +1,4 @@
-# Highspring Automation Decision Log
+# DagoShopFlow Automation Decision Log
 
 ## Purpose
 Record auditable state transitions for test case automation decisions.

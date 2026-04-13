@@ -1,10 +1,10 @@
-using Highspring.Application.Abstractions.Services;
-using Highspring.Application.Domain;
-using Highspring.Web.Infrastructure;
+using DagoShopFlow.Application.Abstractions.Services;
+using DagoShopFlow.Application.Domain;
+using DagoShopFlow.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Highspring.Web.Pages.Products;
+namespace DagoShopFlow.Web.Pages.Products;
 
 public class IndexModel(IStorefrontService storefrontService) : PageModel
 {

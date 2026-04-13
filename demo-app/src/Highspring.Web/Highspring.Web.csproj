@@ -16,6 +16,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>DagoShopFlow.Web</AssemblyName>
+    <RootNamespace>DagoShopFlow.Web</RootNamespace>
   </PropertyGroup>
 
 </Project>

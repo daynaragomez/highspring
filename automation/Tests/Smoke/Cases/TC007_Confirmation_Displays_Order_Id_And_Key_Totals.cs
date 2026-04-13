@@ -1,12 +1,12 @@
-using Highspring.Automation.Api;
-using Highspring.Automation.Pages;
-using Highspring.Automation.Tests;
+using DagoShopFlow.Automation.Api;
+using DagoShopFlow.Automation.Pages;
+using DagoShopFlow.Automation.Tests;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using Xunit;
 
-namespace Highspring.Automation.Tests.Smoke.Cases;
+namespace DagoShopFlow.Automation.Tests.Smoke.Cases;
 
 public sealed class TC007_Confirmation_Displays_Order_Id_And_Key_Totals : BaseTestCase
 {

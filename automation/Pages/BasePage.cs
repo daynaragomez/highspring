@@ -1,8 +1,8 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using Highspring.Automation.Core;
+using DagoShopFlow.Automation.Core;
 
-namespace Highspring.Automation.Pages;
+namespace DagoShopFlow.Automation.Pages;
 
 public abstract class BasePage(IWebDriver driver, WebDriverWait wait)
 {

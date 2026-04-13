@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Highspring.Infrastructure;
+namespace DagoShopFlow.Infrastructure;
 
 public static class DependencyInjection
 {

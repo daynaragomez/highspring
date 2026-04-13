@@ -1,7 +1,7 @@
-using Highspring.Application;
-using Highspring.Application.Abstractions.Services;
-using Highspring.Infrastructure;
-using Highspring.Infrastructure.Persistence;
+using DagoShopFlow.Application;
+using DagoShopFlow.Application.Abstractions.Services;
+using DagoShopFlow.Infrastructure;
+using DagoShopFlow.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

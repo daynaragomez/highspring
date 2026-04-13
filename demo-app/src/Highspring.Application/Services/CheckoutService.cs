@@ -4,7 +4,7 @@ using Highspring.Application.Common;
 using Highspring.Application.Domain;
 using Highspring.Application.UseCases;
 
-namespace Highspring.Application.Services;
+namespace DagoShopFlow.Application.Services;
 
 public class CheckoutService(
     ICartRepository cartRepository,

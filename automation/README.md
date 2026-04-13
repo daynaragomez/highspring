@@ -1,6 +1,6 @@
 # Automation Conventions
 
-This folder contains Selenium UI automation for Highspring using C# + xUnit.
+This folder contains Selenium UI automation for DagoShopFlow using C# + xUnit.
 
 ## Current Architecture
 

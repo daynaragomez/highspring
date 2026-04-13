@@ -4,6 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyName>DagoShopFlow.Application</AssemblyName>
+    <RootNamespace>DagoShopFlow.Application</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

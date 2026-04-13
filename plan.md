@@ -1,18 +1,18 @@
-# Highspring Implementation Plan
+# DagoShopFlow Implementation Plan
 
 ## Model placement
-- Highspring.Application owns domain models and business rules: Product, Cart, CartItem, Coupon, TaxComponentRate, Order, OrderItem, OrderTaxLine, plus Cart/Discount/Tax/Checkout services.
-- Highspring.Infrastructure owns persistence concerns only: EF Core entities/mappings, DbContext, repositories, migrations, and seed file loading.
-- Highspring.Web and Highspring.Api are thin delivery layers (UI + endpoints) and must not contain business logic.
+- DagoShopFlow.Application owns domain models and business rules: Product, Cart, CartItem, Coupon, TaxComponentRate, Order, OrderItem, OrderTaxLine, plus Cart/Discount/Tax/Checkout services.
+- DagoShopFlow.Infrastructure owns persistence concerns only: EF Core entities/mappings, DbContext, repositories, migrations, and seed file loading.
+- DagoShopFlow.Web and DagoShopFlow.Api are thin delivery layers (UI + endpoints) and must not contain business logic.
 
 ## Seed policy (single baseline only)
 - Use one canonical baseline seed only.
-- Baseline seed files must live only at: src/Highspring.Infrastructure/Seed/Baseline/*.json
+-- Baseline seed files must live only at: src/DagoShopFlow.Infrastructure/Seed/Baseline/*.json
 - No scenario-specific seed files are allowed anywhere in the repo.
 - Test scenarios must be created through /test/* endpoints, not by adding new seed files.
 
 ## Startup ownership rule
-- Startup initialization ownership is in Highspring.Web Program startup pipeline.
+-- Startup initialization ownership is in DagoShopFlow.Web Program startup pipeline.
 - Only baseline setup is allowed at startup (environment-gated for Development/Test).
 - Scenario mutations are never done at startup; they are done only via /test/* endpoints during tests.
 

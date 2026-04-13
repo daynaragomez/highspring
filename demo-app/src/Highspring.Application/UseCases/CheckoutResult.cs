@@ -1,4 +1,4 @@
-namespace Highspring.Application.UseCases;
+namespace DagoShopFlow.Application.UseCases;
 
 public class CheckoutResult
 {

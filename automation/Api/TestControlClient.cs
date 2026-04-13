@@ -1,4 +1,4 @@
-namespace Highspring.Automation.Api;
+namespace DagoShopFlow.Automation.Api;
 
 public sealed class TestControlClient(string apiBaseUrl)
 {

@@ -1,8 +1,8 @@
-using Highspring.Automation.Core;
+using DagoShopFlow.Automation.Core;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 
-namespace Highspring.Automation.Tests;
+namespace DagoShopFlow.Automation.Tests;
 
 public abstract class BaseCaseSuiteTest : BaseUiTest
 {
@@ -67,7 +67,7 @@ public abstract class BaseCaseSuiteTest : BaseUiTest
             var directory = new DirectoryInfo(candidate);
             while (directory is not null)
             {
-                var csprojPath = Path.Combine(directory.FullName, "Highspring.Automation.csproj");
+                var csprojPath = Path.Combine(directory.FullName, "DagoShopFlow.Automation.csproj");
                 if (File.Exists(csprojPath))
                 {
                     return directory.FullName;
@@ -77,7 +77,7 @@ public abstract class BaseCaseSuiteTest : BaseUiTest
             }
         }
 
-        throw new InvalidOperationException("Could not locate Highspring.Automation.csproj to resolve deterministic log output path.");
+        throw new InvalidOperationException("Could not locate DagoShopFlow.Automation.csproj to resolve deterministic log output path.");
     }
 
     private string? TryCaptureFailureScreenshot(string caseId, Guid caseExecutionId)

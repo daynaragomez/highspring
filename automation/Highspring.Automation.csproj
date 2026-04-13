@@ -4,6 +4,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <AssemblyName>DagoShopFlow.Automation</AssemblyName>
+    <RootNamespace>DagoShopFlow.Automation</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

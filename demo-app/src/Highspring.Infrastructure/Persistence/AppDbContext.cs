@@ -1,7 +1,7 @@
 using Highspring.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Highspring.Infrastructure.Persistence;
+namespace DagoShopFlow.Infrastructure.Persistence;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {

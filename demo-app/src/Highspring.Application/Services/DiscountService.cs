@@ -3,7 +3,7 @@ using Highspring.Application.Abstractions.Services;
 using Highspring.Application.Common;
 using Highspring.Application.Domain;
 
-namespace Highspring.Application.Services;
+namespace DagoShopFlow.Application.Services;
 
 public class DiscountService(ICouponRepository couponRepository) : IDiscountService
 {

@@ -2,7 +2,7 @@ using Highspring.Application.Abstractions.Repositories;
 using Highspring.Application.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Highspring.Infrastructure.Persistence.Repositories;
+namespace DagoShopFlow.Infrastructure.Persistence.Repositories;
 
 public class CouponRepository(AppDbContext dbContext) : ICouponRepository
 {

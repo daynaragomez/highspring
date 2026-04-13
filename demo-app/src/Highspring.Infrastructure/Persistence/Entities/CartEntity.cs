@@ -1,4 +1,4 @@
-namespace Highspring.Infrastructure.Persistence.Entities;
+namespace DagoShopFlow.Infrastructure.Persistence.Entities;
 
 public class CartEntity
 {

@@ -3,7 +3,7 @@ using Highspring.Application.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Highspring.Web.Pages.Checkout;
+namespace DagoShopFlow.Web.Pages.Checkout;
 
 public class ConfirmationModel(IStorefrontService storefrontService) : PageModel
 {

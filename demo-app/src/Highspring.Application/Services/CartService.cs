@@ -2,7 +2,7 @@ using Highspring.Application.Abstractions.Repositories;
 using Highspring.Application.Abstractions.Services;
 using Highspring.Application.Domain;
 
-namespace Highspring.Application.Services;
+namespace DagoShopFlow.Application.Services;
 
 public class CartService(
     ICartRepository cartRepository,

@@ -1,4 +1,4 @@
-namespace Highspring.Application.Domain;
+namespace DagoShopFlow.Application.Domain;
 
 public class CartItem
 {

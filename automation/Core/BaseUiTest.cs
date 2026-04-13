@@ -1,8 +1,8 @@
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
-using Highspring.Automation.Config;
+using DagoShopFlow.Automation.Config;
 
-namespace Highspring.Automation.Core;
+namespace DagoShopFlow.Automation.Core;
 
 public abstract class BaseUiTest : IDisposable
 {

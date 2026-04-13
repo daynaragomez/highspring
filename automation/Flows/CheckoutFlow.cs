@@ -1,6 +1,6 @@
-using Highspring.Automation.Pages;
+using DagoShopFlow.Automation.Pages;
 
-namespace Highspring.Automation.Flows;
+namespace DagoShopFlow.Automation.Flows;
 
 public sealed class CheckoutFlow(CheckoutPage checkoutPage)
 {

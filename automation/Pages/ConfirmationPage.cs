@@ -1,8 +1,8 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using Highspring.Automation.Selectors;
+using DagoShopFlow.Automation.Selectors;
 
-namespace Highspring.Automation.Pages;
+namespace DagoShopFlow.Automation.Pages;
 
 public sealed class ConfirmationPage(IWebDriver driver, WebDriverWait wait) : BasePage(driver, wait)
 {

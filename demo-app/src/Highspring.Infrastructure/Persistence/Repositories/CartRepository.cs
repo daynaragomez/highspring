@@ -3,7 +3,7 @@ using Highspring.Application.Domain;
 using Highspring.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Highspring.Infrastructure.Persistence.Repositories;
+namespace DagoShopFlow.Infrastructure.Persistence.Repositories;
 
 public class CartRepository(AppDbContext dbContext) : ICartRepository
 {
