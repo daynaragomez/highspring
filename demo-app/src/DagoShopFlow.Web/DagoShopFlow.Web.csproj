@@ -7,8 +7,8 @@
     <RootNamespace>DagoShopFlow.Web</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Highspring.Application\Highspring.Application.csproj" />
-    <ProjectReference Include="..\Highspring.Infrastructure\Highspring.Infrastructure.csproj" />
+    <ProjectReference Include="..\DagoShopFlow.Application\DagoShopFlow.Application.csproj" />
+    <ProjectReference Include="..\DagoShopFlow.Infrastructure\DagoShopFlow.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
